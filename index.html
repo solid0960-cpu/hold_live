@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOLD LIVE | Косметика Бишкек</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Бегущая строка с акциями -->
+<div class="marquee">
+  <div class="marquee__track">
+    <span>✦ Доставка по Бишкеку сегодня ✦ Новинки недели — кушоны Torriden ✦ Оплата при получении ✦ Скидка 10% при заказе от 2000 сом ✦ Доставка по Бишкеку сегодня ✦ Новинки недели — кушоны Torriden ✦ Оплата при получении ✦ Скидка 10% при заказе от 2000 сом ✦</span>
+    <span aria-hidden="true">✦ Доставка по Бишкеку сегодня ✦ Новинки недели — кушоны Torriden ✦ Оплата при получении ✦ Скидка 10% при заказе от 2000 сом ✦ Доставка по Бишкеку сегодня ✦ Новинки недели — кушоны Torriden ✦ Оплата при получении ✦ Скидка 10% при заказе от 2000 сом ✦</span>
+  </div>
+</div>
+
+<!-- Шапка -->
+<header class="header">
+  <div class="header__inner">
+    <a href="#" class="logo">
+      <span class="logo__mark">HL</span>
+      <span class="logo__text">HOLD LIVE<small>Косметика · Бишкек</small></span>
+    </a>
+
+    <nav class="nav" id="nav">
+      <a href="#catalog" data-filter="all">Все товары</a>
+      <a href="#catalog" data-filter="new">Новинки</a>
+      <a href="#catalog" data-filter="sale">Акции</a>
+      <a href="#about">О нас</a>
+      <a href="#delivery">Доставка</a>
+    </nav>
+
+    <button class="cart-btn" id="cartBtn" aria-label="Открыть корзину">
+      <svg class="cart-btn__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 4H5L5.5 6M5.5 6H20L18 13H7L5.5 6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        <circle cx="9" cy="18" r="1.4" fill="currentColor"/>
+        <circle cx="17" cy="18" r="1.4" fill="currentColor"/>
+      </svg>
+      <span class="cart-btn__count" id="cartCount">0</span>
+    </button>
+
+    <button class="burger" id="burger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Герой -->
+<section class="hero">
+  <div class="hero__inner">
+    <p class="hero__eyebrow">Бишкек · оплата при получении</p>
+    <h1 class="hero__title">Мейк, который<br><em>держит</em> лицо.</h1>
+    <p class="hero__sub">Тональные средства, кушоны, пудры и помады — оригинальная корейская и премиум-косметика с доставкой по городу.</p>
+    <div class="hero__actions">
+      <a href="#catalog" class="btn btn--primary">Смотреть каталог</a>
+      <a href="#delivery" class="btn btn--ghost">Как заказать</a>
+    </div>
+  </div>
+  <div class="hero__swipe" aria-hidden="true"></div>
+</section>
+
+<!-- Категории -->
+<section class="categories" id="categories">
+  <h2 class="section-title">Категории</h2>
+  <div class="categories__row" id="categoryRow">
+    <!-- заполняется через JS -->
+  </div>
+</section>
+
+<!-- Каталог -->
+<section class="catalog" id="catalog">
+  <div class="catalog__head">
+    <h2 class="section-title">Товары</h2>
+    <div class="catalog__filters" id="catalogFilters">
+      <button class="chip is-active" data-filter="all">Все</button>
+      <button class="chip" data-filter="new">Новинки</button>
+      <button class="chip" data-filter="sale">Акции</button>
+    </div>
+  </div>
+  <div class="catalog__grid" id="catalogGrid">
+    <!-- карточки товаров через JS -->
+  </div>
+</section>
+
+<!-- О нас -->
+<section class="about" id="about">
+  <div class="about__inner">
+    <h2 class="section-title section-title--light">О HOLD LIVE</h2>
+    <p>Мы подбираем косметику, которая держится весь день — от утреннего кофе до вечерних встреч. Только проверенные бренды, честные составы и быстрая доставка по Бишкеку.</p>
+    <div class="about__badges">
+      <div class="badge">✓ Оригинальная продукция</div>
+      <div class="badge">✓ Доставка по Бишкеку</div>
+      <div class="badge">✓ Оплата при получении</div>
+    </div>
+  </div>
+</section>
+
+<!-- Доставка -->
+<section class="delivery" id="delivery">
+  <h2 class="section-title">Как это работает</h2>
+  <div class="delivery__steps">
+    <div class="step">
+      <span class="step__num">1</span>
+      <h3>Выбираете товар</h3>
+      <p>Добавляете нужные позиции в корзину, указываете количество каждой.</p>
+    </div>
+    <div class="step">
+      <span class="step__num">2</span>
+      <h3>Оформляете заказ</h3>
+      <p>После подтверждения покупки укажите номер телефона и адрес доставки.</p>
+    </div>
+    <div class="step">
+      <span class="step__num">3</span>
+      <h3>Оплата при получении</h3>
+      <p>Курьер привозит заказ по Бишкеку — оплата наличными или переводом на месте.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Футер -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="logo__mark">HL</span>
+      <span>HOLD LIVE</span>
+    </div>
+    <p>Косметика в Бишкеке · Доставка по городу · Оплата при получении</p>
+    <p class="footer__insta">Instagram: @hold_live_kg</p>
+  </div>
+</footer>
+
+<!-- Оверлей корзины -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Панель корзины -->
+<aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+  <div class="cart-drawer__head">
+    <h3>Ваша корзина</h3>
+    <button class="cart-drawer__close" id="cartClose" aria-label="Закрыть">&times;</button>
+  </div>
+
+  <div class="cart-drawer__body" id="cartBody">
+    <!-- список товаров через JS -->
+  </div>
+
+  <div class="cart-drawer__footer" id="cartFooter">
+    <div class="cart-drawer__total">
+      <span>Итого</span>
+      <strong id="cartTotal">0 сом</strong>
+    </div>
+    <button class="btn btn--primary btn--block" id="checkoutBtn">Оформить заказ</button>
+  </div>
+</aside>
+
+<!-- Модалка оформления заказа -->
+<div class="modal" id="checkoutModal" aria-hidden="true">
+  <div class="modal__card">
+    <button class="modal__close" id="checkoutClose" aria-label="Закрыть">&times;</button>
+
+    <div id="checkoutStep1">
+      <h3>Подтверждение заказа</h3>
+      <div class="modal__order-list" id="modalOrderList"></div>
+      <div class="modal__total">
+        <span>Итого к оплате</span>
+        <strong id="modalTotal">0 сом</strong>
+      </div>
+      <button class="btn btn--primary btn--block" id="confirmOrderBtn">Подтвердить покупку</button>
+    </div>
+
+    <form id="checkoutStep2" class="checkout-form" hidden>
+      <h3>Данные для доставки</h3>
+      <p class="checkout-form__hint">Заказ подтверждён. Укажите, куда и кому привезти покупку.</p>
+
+      <label>
+        Имя
+        <input type="text" name="name" placeholder="Как к вам обращаться" required>
+      </label>
+      <label>
+        Номер телефона
+        <input type="tel" name="phone" placeholder="+996 ___ ___ ___" required>
+      </label>
+      <label>
+        Адрес доставки
+        <input type="text" name="address" placeholder="Район, улица, дом, квартира" required>
+      </label>
+      <label>
+        Комментарий к заказу
+        <textarea name="comment" placeholder="Удобное время доставки, ориентир и т.д. (необязательно)"></textarea>
+      </label>
+
+      <div class="checkout-form__payment">Оплата: наличными или переводом курьеру при получении</div>
+
+      <button type="submit" class="btn btn--primary btn--block">Отправить заказ</button>
+    </form>
+
+    <div id="checkoutStep3" class="checkout-success" hidden>
+      <div class="checkout-success__icon">✓</div>
+      <h3>Заказ принят!</h3>
+      <p>Мы свяжемся с вами по указанному номеру, чтобы согласовать доставку по Бишкеку.</p>
+      <button class="btn btn--ghost btn--block" id="closeSuccessBtn">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
