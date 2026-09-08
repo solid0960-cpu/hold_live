@@ -36,9 +36,9 @@ const PRODUCTS = [
    Telegram — уведомления сотрудникам о заказах
    ============================================ */
 // 1) Впиши сюда токен бота, который дал @BotFather
-const TELEGRAM_BOT_TOKEN = '8637447182:AAG0CT8Za4cLVUGR56w35Z6myNtoUeTXOjI';
+const TELEGRAM_BOT_TOKEN = '8677024699:AAFnNc3GGZzpgxTQGcgYOGyq87IknMYnOho';
 // 2) Впиши сюда ID группы сотрудников (отрицательное число вида -1001234567890)
-const TELEGRAM_CHAT_ID = '-1004213789794';
+const TELEGRAM_CHAT_ID = '-1003943974440';
 
 function buildOrderMessage(orderItems, total, customer){
   const itemsText = orderItems
