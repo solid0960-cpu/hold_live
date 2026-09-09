@@ -119,10 +119,8 @@ button{ font-family:inherit; cursor:pointer; }
 .logo{ display:flex; align-items:center; gap:10px; }
 .logo__mark{
   width:40px; height:40px; border-radius:50%;
-  background:var(--berry); color:var(--white);
-  display:flex; align-items:center; justify-content:center;
-  font-family:var(--font-display); font-weight:700; font-size:0.95rem;
   flex-shrink:0;
+  object-fit:cover;
 }
 .logo__text{
   font-family:var(--font-display);
@@ -237,9 +235,108 @@ button{ font-family:inherit; cursor:pointer; }
   z-index:1;
   animation:drift 12s ease-in-out infinite alternate;
 }
+
+/* Фоновое фото — положи файл в images/hero-bg.jpg (рекомендуемый размер от 1600px по ширине).
+   Пока файла нет, здесь просто ничего не будет видно — героя держат градиенты выше. */
+/* Фоновое фото — положи файл в images/hero-bg.jpg (рекомендуемый размер от 1600px по ширине). */
+.hero__bg{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  opacity:0.45;
+  z-index:0;
+}
+.hero__bg-overlay{
+  position:absolute; inset:0;
+  z-index:0;
+  background:linear-gradient(180deg, var(--cream) 0%, rgba(255,248,244,0.2) 35%, rgba(255,248,244,0.6) 100%);
+}
 @keyframes drift{
   from{ transform:translateX(-52%) rotate(-3deg); }
   to{ transform:translateX(-48%) rotate(2deg); }
+}
+
+/* ============================================
+   Значки доверия
+   ============================================ */
+.trust-bar{
+  background:var(--white);
+  border-bottom:1px solid rgba(139,21,56,0.08);
+  position:relative; z-index:2;
+}
+.trust-bar__inner{
+  max-width:1180px; margin:0 auto;
+  padding:18px 24px;
+  display:flex; flex-wrap:wrap;
+  gap:20px 32px;
+  justify-content:center;
+}
+.trust-item{
+  display:flex; align-items:center; gap:8px;
+  font-size:0.82rem; font-weight:700;
+  color:var(--ink);
+}
+.trust-item__icon{ font-size:1.05rem; }
+
+/* ============================================
+   Наши филиалы
+   ============================================ */
+.branches{ max-width:1180px; margin:0 auto; padding:64px 24px 20px; }
+.branches__grid{
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:32px;
+  align-items:stretch;
+}
+.branches__photo{
+  position:relative;
+  border-radius:var(--radius-l);
+  overflow:hidden;
+  min-height:280px;
+  background:linear-gradient(135deg, var(--blush-soft), var(--blush));
+  box-shadow:var(--shadow-soft);
+}
+.branches__photo-img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+  position:absolute; inset:0;
+}
+.branches__photo-fallback{
+  display:none;
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:12px;
+  width:100%; height:100%;
+  min-height:280px;
+  color:var(--berry-dark);
+}
+.branches__photo-fallback span{ font-size:3rem; }
+.branches__photo-fallback p{ font-size:0.85rem; font-weight:600; margin:0; opacity:0.75; }
+
+.branches__list{
+  display:flex; flex-direction:column;
+  gap:14px;
+  background:var(--white);
+  border-radius:var(--radius-l);
+  padding:28px;
+  box-shadow:var(--shadow-soft);
+  justify-content:center;
+}
+.branch-item{
+  display:flex; align-items:center; gap:12px;
+  font-size:0.95rem; font-weight:600;
+  color:var(--ink);
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(139,21,56,0.08);
+}
+.branch-item:last-of-type{ border-bottom:none; padding-bottom:0; }
+.branch-item__icon{ font-size:1.1rem; flex-shrink:0; }
+.branches__whatsapp{ margin-top:10px; background:#25D366; }
+.branches__whatsapp:hover{ background:#1DA851; }
+
+@media (max-width: 780px){
+  .branches__grid{ grid-template-columns:1fr; }
+  .branches__photo{ min-height:220px; }
 }
 
 /* ============================================
@@ -323,6 +420,17 @@ button{ font-family:inherit; cursor:pointer; }
   background:linear-gradient(135deg, var(--blush-soft), var(--blush));
   display:flex; align-items:center; justify-content:center;
   font-size:2.6rem;
+  overflow:hidden;
+}
+.product-card__photo{
+  width:100%; height:100%;
+  object-fit:cover;
+}
+/* Пока настоящего фото нет (images/products/ID.jpg отсутствует), сайт сам покажет эту иконку вместо фото */
+.product-card__icon-fallback{
+  display:none;
+  align-items:center; justify-content:center;
+  width:100%; height:100%;
 }
 .product-card__tag{
   position:absolute; top:10px; left:10px;
@@ -413,7 +521,7 @@ button{ font-family:inherit; cursor:pointer; }
 .footer{ background:var(--ink); color:rgba(255,255,255,0.7); padding:44px 24px; }
 .footer__inner{ max-width:1180px; margin:0 auto; text-align:center; }
 .footer__brand{ display:flex; align-items:center; justify-content:center; gap:10px; font-family:var(--font-display); font-size:1.1rem; color:var(--white); margin-bottom:10px; }
-.footer__brand .logo__mark{ width:32px; height:32px; font-size:0.8rem; }
+.footer__brand .logo__mark{ width:32px; height:32px; }
 .footer p{ margin:4px 0; font-size:0.84rem; }
 .footer__insta{ color:var(--blush); font-weight:600; }
 
