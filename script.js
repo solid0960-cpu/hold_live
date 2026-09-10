@@ -2,6 +2,81 @@
    HOLD LIVE — данные магазина
    Замени emoji на реальные <img src="..."> когда будут фото товаров
    ============================================ */
+
+/* Филиалы — фото галерея. Когда появятся реальные фото, добавь пути в массив
+   photos у нужного филиала (можно несколько — стрелки появятся сами). */
+const BRANCHES = [
+  { address: 'пр-т Чуй 140',                          photos: ['images/branches/chuy-1.jpg'] },
+  { address: 'Бета Сторес 2, 1-этаж, 132 бутик',       photos: ['images/branches/beta-1.jpg'] },
+  { address: 'ЦУМ 2, 2 этаж, 228 бутик',               photos: ['images/branches/tsum-1.jpg', 'images/branches/tsum-2.webp'] },
+  { address: 'ул. Чынгыза Айтматова 80',               photos: ['images/branches/aitmatova-1.jpg'] },
+];
+
+let activeBranch = 0;
+let activeBranchPhoto = 0;
+
+function renderBranches(){
+  const list = document.getElementById('branchList');
+  const whatsappBtn = list.querySelector('.branches__whatsapp');
+
+  list.querySelectorAll('.branch-item').forEach(el => el.remove());
+
+  BRANCHES.forEach((b, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'branch-item' + (i === activeBranch ? ' is-active' : '');
+    btn.innerHTML = `<span class="branch-item__icon">📍</span><span>${b.address}</span>`;
+    btn.addEventListener('click', () => {
+      activeBranch = i;
+      activeBranchPhoto = 0;
+      renderBranches();
+      updateBranchPhoto();
+    });
+    list.insertBefore(btn, whatsappBtn);
+  });
+}
+
+function updateBranchPhoto(){
+  const branch = BRANCHES[activeBranch];
+  const photo = branch.photos[activeBranchPhoto];
+  const img = document.getElementById('branchPhotoImg');
+  const fallback = document.getElementById('branchPhotoFallback');
+  const caption = document.getElementById('branchPhotoCaption');
+  const prevBtn = document.getElementById('branchPrev');
+  const nextBtn = document.getElementById('branchNext');
+  const dots = document.getElementById('branchDots');
+
+  caption.textContent = `Фото филиала «${branch.address}» скоро будет здесь`;
+
+  img.onerror = () => { img.style.display = 'none'; fallback.style.display = 'flex'; };
+  img.onload = () => { img.style.display = 'block'; fallback.style.display = 'none'; };
+  img.src = photo;
+
+  const hasMultiple = branch.photos.length > 1;
+  prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+  nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+
+  dots.innerHTML = hasMultiple
+    ? branch.photos.map((_, i) => `<span class="branches__dot ${i === activeBranchPhoto ? 'is-active' : ''}" data-i="${i}"></span>`).join('')
+    : '';
+  dots.querySelectorAll('.branches__dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      activeBranchPhoto = Number(dot.dataset.i);
+      updateBranchPhoto();
+    });
+  });
+}
+
+document.getElementById('branchPrev').addEventListener('click', () => {
+  const branch = BRANCHES[activeBranch];
+  activeBranchPhoto = (activeBranchPhoto - 1 + branch.photos.length) % branch.photos.length;
+  updateBranchPhoto();
+});
+document.getElementById('branchNext').addEventListener('click', () => {
+  const branch = BRANCHES[activeBranch];
+  activeBranchPhoto = (activeBranchPhoto + 1) % branch.photos.length;
+  updateBranchPhoto();
+});
+
 const CATEGORIES = [
   { id: 'foundation', label: 'Тональные средства', icon: '🧴' },
   { id: 'cushion',    label: 'Кушоны',              icon: '🌸' },
@@ -151,7 +226,9 @@ function renderCatalog(){
     <article class="product-card" style="animation-delay:${Math.min(i * 0.04, 0.4)}s">
       <div class="product-card__media">
         ${p.tag ? `<span class="product-card__tag product-card__tag--${p.tag}">${p.tag === 'new' ? 'Новинка' : 'Акция'}</span>` : ''}
-        <span>${p.icon}</span>
+        <img src="images/products/${p.id}.jpg" alt="${p.name}" class="product-card__photo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <span class="product-card__icon-fallback">${p.icon}</span>
       </div>
       <div class="product-card__body">
         <span class="product-card__cat">${CATEGORIES.find(c=>c.id===p.cat).label}</span>
@@ -391,3 +468,5 @@ document.getElementById('closeSuccessBtn').addEventListener('click', () => {
 renderCategories();
 renderCatalog();
 renderCartDrawer();
+renderBranches();
+updateBranchPhoto();
