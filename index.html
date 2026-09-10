@@ -92,31 +92,18 @@
 <section class="branches" id="branches">
   <h2 class="section-title">Наши филиалы</h2>
   <div class="branches__grid">
-    <div class="branches__photo">
-      <img src="images/store-photo.jpg" alt="Магазин HOLD LIVE" class="branches__photo-img"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="branches__photo-fallback">
+    <div class="branches__photo" id="branchPhoto">
+      <img src="" alt="" class="branches__photo-img" id="branchPhotoImg" style="display:none;">
+      <div class="branches__photo-fallback" id="branchPhotoFallback">
         <span>🏬</span>
-        <p>Фото магазина скоро будет здесь</p>
+        <p id="branchPhotoCaption">Фото магазина скоро будет здесь</p>
       </div>
+      <button class="branches__arrow branches__arrow--prev" id="branchPrev" aria-label="Предыдущее фото">‹</button>
+      <button class="branches__arrow branches__arrow--next" id="branchNext" aria-label="Следующее фото">›</button>
+      <div class="branches__dots" id="branchDots"></div>
     </div>
-    <div class="branches__list">
-      <div class="branch-item">
-        <span class="branch-item__icon">📍</span>
-        <span>пр-т Чуй 140</span>
-      </div>
-      <div class="branch-item">
-        <span class="branch-item__icon">📍</span>
-        <span>Бета Сторес 2, 1-этаж, 132 бутик</span>
-      </div>
-      <div class="branch-item">
-        <span class="branch-item__icon">📍</span>
-        <span>ЦУМ 2, 2 этаж, 228 бутик</span>
-      </div>
-      <div class="branch-item">
-        <span class="branch-item__icon">📍</span>
-        <span>ул. Чынгыза Айтматова 80</span>
-      </div>
+    <div class="branches__list" id="branchList">
+      <!-- адреса рендерятся через JS -->
       <a href="https://wa.me/996707489959" class="btn btn--primary branches__whatsapp" target="_blank" rel="noopener">
         Написать в WhatsApp
       </a>
