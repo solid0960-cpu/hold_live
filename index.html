@@ -254,6 +254,36 @@
   </div>
 </div>
 
+<!-- Модалка детального просмотра товара -->
+<div class="modal" id="productModal" aria-hidden="true">
+  <div class="modal__card modal__card--product">
+    <button class="modal__close" id="productModalClose" aria-label="Закрыть">&times;</button>
+
+    <div class="product-modal__grid">
+      <div class="product-modal__photo" id="productModalPhoto">
+        <img src="" alt="" class="product-modal__photo-img" id="productModalPhotoImg" style="display:none;">
+        <div class="product-modal__photo-fallback" id="productModalPhotoFallback">
+          <span id="productModalFallbackIcon">🧴</span>
+        </div>
+        <button class="branches__arrow branches__arrow--prev" id="productModalPrev" aria-label="Предыдущее фото">‹</button>
+        <button class="branches__arrow branches__arrow--next" id="productModalNext" aria-label="Следующее фото">›</button>
+        <div class="branches__dots" id="productModalDots"></div>
+      </div>
+
+      <div class="product-modal__info">
+        <span class="product-card__cat" id="productModalCat"></span>
+        <h3 id="productModalName"></h3>
+        <span class="product-card__stock" id="productModalStock">✓ В наличии</span>
+        <p class="product-modal__desc" id="productModalDesc"></p>
+        <div class="product-modal__footer">
+          <span class="product-modal__price" id="productModalPrice"></span>
+          <div id="productModalControl"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="script.js"></script>
 </body>
 </html>
