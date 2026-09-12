@@ -353,6 +353,18 @@ function renderCartDrawer(){
 }
 
 /* ============================================
+   Блокировка прокрутки фона, пока открыто окно
+   ============================================ */
+function isAnyOverlayOpen(){
+  return cartDrawer.classList.contains('is-open') ||
+         checkoutModal.classList.contains('is-open') ||
+         productModal.classList.contains('is-open') ||
+         nav.classList.contains('is-open');
+}
+function lockScroll(){ document.body.style.overflow = 'hidden'; }
+function unlockScrollIfNeeded(){ if (!isAnyOverlayOpen()) document.body.style.overflow = ''; }
+
+/* ============================================
    Открытие/закрытие корзины
    ============================================ */
 const overlay = document.getElementById('overlay');
@@ -361,10 +373,12 @@ const cartDrawer = document.getElementById('cartDrawer');
 function openCart(){
   cartDrawer.classList.add('is-open');
   overlay.classList.add('is-visible');
+  lockScroll();
 }
 function closeCart(){
   cartDrawer.classList.remove('is-open');
   overlay.classList.remove('is-visible');
+  unlockScrollIfNeeded();
 }
 
 document.getElementById('cartBtn').addEventListener('click', openCart);
@@ -376,8 +390,11 @@ overlay.addEventListener('click', () => { closeCart(); closeCheckout(); closeMob
    ============================================ */
 const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
-function closeMobileNav(){ nav.classList.remove('is-open'); }
-burger.addEventListener('click', () => nav.classList.toggle('is-open'));
+function closeMobileNav(){ nav.classList.remove('is-open'); unlockScrollIfNeeded(); }
+burger.addEventListener('click', () => {
+  nav.classList.toggle('is-open');
+  if (nav.classList.contains('is-open')) lockScroll(); else unlockScrollIfNeeded();
+});
 nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
 
 /* ============================================
@@ -405,12 +422,14 @@ function openCheckout(){
   step1.hidden = false; step2.hidden = true; step3.hidden = true;
   checkoutModal.classList.add('is-open');
   overlay.classList.add('is-visible');
+  lockScroll();
   closeCart();
 }
 
 function closeCheckout(){
   checkoutModal.classList.remove('is-open');
   overlay.classList.remove('is-visible');
+  unlockScrollIfNeeded();
 }
 
 function renderModalOrder(){
@@ -487,11 +506,13 @@ function openProductModal(id){
   renderProductModal();
   productModal.classList.add('is-open');
   overlay.classList.add('is-visible');
+  lockScroll();
 }
 
 function closeProductModal(){
   productModal.classList.remove('is-open');
   overlay.classList.remove('is-visible');
+  unlockScrollIfNeeded();
 }
 
 function renderProductModal(){
