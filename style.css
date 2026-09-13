@@ -649,7 +649,8 @@ button{ font-family:inherit; cursor:pointer; }
 .modal__card--product{
   width:min(760px, 100%);
   padding:0;
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 .product-modal__grid{
   display:grid;
@@ -659,6 +660,8 @@ button{ font-family:inherit; cursor:pointer; }
   position:relative;
   min-height:380px;
   background:linear-gradient(135deg, var(--blush-soft), var(--blush));
+  border-radius:var(--radius-l) 0 0 var(--radius-l);
+  overflow:hidden;
 }
 .product-modal__photo-img{
   position:absolute; inset:0;
@@ -695,7 +698,7 @@ button{ font-family:inherit; cursor:pointer; }
 
 @media (max-width: 680px){
   .product-modal__grid{ grid-template-columns:1fr; }
-  .product-modal__photo{ min-height:260px; }
+  .product-modal__photo{ min-height:260px; border-radius:var(--radius-l) var(--radius-l) 0 0; }
   .product-modal__photo-fallback{ min-height:260px; }
 }
 
