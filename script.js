@@ -152,6 +152,14 @@ const PRODUCTS = [
     desc:'Увлажняющий солнцезащитный крем на химических фильтрах с невесомой освежающей консистенцией быстро впитывается, без липкости и эффекта маски. Содержит токоферол, аденозин и ниацинамид. Подходит для всех типов кожи.' },
   { id:'p36',name:'Beplain Mung Bean Cleansing Water', cat:'cleansing', price:1080, oldPrice:null, icon:'🧼', tag:'new', stock:true,
     desc:'Липосомальная очищающая вода деликатно удаляет загрязнения, смывает макияж любой стойкости. Содержит 5 видов церамидов, 8 видов гиалуроновой кислоты, аллантоин и пантенол.' },
+  { id:'p37',name:'SKIN1004 Madagascar Centella Ampoule Foam', cat:'cleansing', price:780, oldPrice:null, icon:'🧼', tag:'new', stock:true,
+    desc:'Пенка удаляет загрязнения, ороговевшие клетки и излишки себума, не приводит к сухости и не вызывает ощущения стянутости. Главным активным компонентом является 30% экстракт центеллы азиатской. Подходит для всех типов кожи.' },
+  { id:'p38',name:'SKIN1004 Madagascar Centella Light Cleansing Oil', cat:'cleansing', price:1020, oldPrice:null, icon:'🧼', tag:'new', stock:true,
+    desc:'Гидрофильное масло растворяет макияж и загрязнения, также успокаивает и смягчает чувствительную кожу. Очищает поры, удаляет излишки себума и ороговевшие клетки. Основной компонент — 10% экстракт центеллы азиатской. Подходит для всех типов кожи.' },
+  { id:'p39',name:'SKIN1004 Madagascar Centella Toning Toner', cat:'toner', price:1050, oldPrice:null, icon:'💦', tag:'new', stock:true,
+    desc:'Тонер смягчает, увлажняет и успокаивает кожу после умывания, оказывает мягкий пилинг-эффект и поддерживает чистоту кожи. Содержит PHA, ниацинамид и аденозин. Подходит для всех типов кожи.' },
+  { id:'p40',name:'SKIN1004 Madagascar Centella Ampoule', cat:'serum', price:880, oldPrice:null, icon:'💧', tag:'new', stock:true,
+    desc:'Ампула для лица содержит высококонцентрированный экстракт центеллы азиатской. Успокаивает раздражённую кожу, способствует восстановлению, снижает чувствительность и укрепляет сосуды. Подходит для всех типов кожи.' },
 ];
 
 /* ============================================
@@ -273,7 +281,7 @@ function renderCatalog(){
     <article class="product-card" style="animation-delay:${Math.min(i * 0.04, 0.4)}s">
       <div class="product-card__media" data-view="${p.id}">
         ${p.tag ? `<span class="product-card__tag product-card__tag--${p.tag}">${p.tag === 'new' ? 'Новинка' : 'Акция'}</span>` : ''}
-        <img src="images/products/${p.id}.jpg" alt="${p.name}" class="product-card__photo"
+        <img src="images/products/${p.id}.jpg" alt="${p.name}" class="product-card__photo" loading="lazy" decoding="async"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <span class="product-card__icon-fallback">${p.icon}</span>
       </div>
