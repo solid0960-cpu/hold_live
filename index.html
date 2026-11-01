@@ -33,6 +33,7 @@
       <a href="#catalog" data-filter="sale">Акции</a>
       <a href="#about">О нас</a>
       <a href="#delivery">Доставка</a>
+      <a href="#support" id="supportNavLink">Поддержка</a>
     </nav>
 
     <button class="cart-btn" id="cartBtn" aria-label="Открыть корзину">
@@ -183,6 +184,17 @@
   </div>
 </section>
 
+<!-- Поддержка -->
+<section class="support" id="support">
+  <div class="support__cta">
+    <div>
+      <h2 class="support__cta-title">Нужна помощь?</h2>
+      <p>Жалоба, возврат, не нашли товар или другой вопрос — оставьте обращение, мы свяжемся с вами в WhatsApp.</p>
+    </div>
+    <button type="button" class="btn btn--primary" id="supportOpen">Поддержка</button>
+  </div>
+</section>
+
 <!-- Футер -->
 <footer class="footer">
   <div class="footer__inner">
@@ -294,6 +306,69 @@
           <div id="productModalControl"></div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Окно поддержки -->
+<div class="modal" id="supportModal" aria-hidden="true">
+  <div class="modal__card modal__card--support">
+    <button class="modal__close" id="supportClose" aria-label="Закрыть">&times;</button>
+
+    <div id="supportStep1">
+      <h3>Поддержка</h3>
+      <p class="support-lead">Выберите, с чем вам нужна помощь:</p>
+      <div class="support-types">
+        <button type="button" class="support-type" data-type="complaint">
+          <span class="support-type__icon">⚠️</span>
+          <span class="support-type__body"><b>Жалоба</b><small>На товар, доставку или обслуживание</small></span>
+        </button>
+        <button type="button" class="support-type" data-type="return">
+          <span class="support-type__icon">↩️</span>
+          <span class="support-type__body"><b>Возврат</b><small>Вернуть купленный товар</small></span>
+        </button>
+        <button type="button" class="support-type" data-type="missing">
+          <span class="support-type__icon">🔍</span>
+          <span class="support-type__body"><b>Отсутствующий товар</b><small>Ищете то, чего нет на сайте</small></span>
+        </button>
+        <button type="button" class="support-type" data-type="other">
+          <span class="support-type__icon">💬</span>
+          <span class="support-type__body"><b>Другой вопрос</b><small>Любые другие обращения</small></span>
+        </button>
+      </div>
+    </div>
+
+    <form id="supportStep2" class="checkout-form support-form" hidden novalidate>
+      <button type="button" class="support-back" id="supportBack">‹ Назад</button>
+      <h3 id="supportFormTitle"></h3>
+      <p class="checkout-form__hint" id="supportFormHint"></p>
+
+      <label>
+        Имя
+        <input type="text" name="name" placeholder="Как к вам обращаться" autocomplete="name" maxlength="80">
+      </label>
+      <label>
+        Номер WhatsApp
+        <input type="tel" name="phone" placeholder="+996 ___ ___ ___" autocomplete="tel" inputmode="tel" maxlength="20">
+      </label>
+      <label id="supportProductWrap">
+        <span id="supportProductLabel">Название товара</span>
+        <input type="text" name="product" placeholder="Например: AXIS-Y Dark Spot Glow Serum" maxlength="150">
+      </label>
+      <label>
+        <span id="supportTextLabel">Описание обращения</span>
+        <textarea name="text" rows="4" maxlength="1500"></textarea>
+      </label>
+
+      <div class="support-form__error" id="supportError" role="alert" hidden></div>
+      <button type="submit" class="btn btn--primary btn--block" id="supportSubmit">Отправить обращение</button>
+    </form>
+
+    <div id="supportStep3" class="checkout-success" hidden>
+      <div class="checkout-success__icon">✓</div>
+      <h3>Обращение отправлено!</h3>
+      <p>Спасибо! Мы получили ваше сообщение и свяжемся с вами в WhatsApp.</p>
+      <button class="btn btn--ghost btn--block" id="supportDone">Закрыть</button>
     </div>
   </div>
 </div>
