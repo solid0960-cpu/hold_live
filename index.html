@@ -88,6 +88,20 @@
   </div>
 </section>
 
+<!-- Быстрый доступ (как в приложении): поиск, категории, новинки -->
+<section class="quick" id="quick">
+  <label class="quick__search">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <input type="search" id="searchInput" placeholder="Найти товар" autocomplete="off" enterkeyhint="search">
+  </label>
+  <div class="quick__cats" id="quickCats"></div>
+  <div class="quick__head" id="quickHead">
+    <h2>Новинки</h2>
+    <a href="#catalog" data-filter="new" class="quick__all">Смотреть все</a>
+  </div>
+  <div class="quick__strip" id="newStrip"></div>
+</section>
+
 <!-- Наши филиалы -->
 <section class="branches" id="branches">
   <h2 class="section-title">Наши филиалы</h2>
