@@ -415,6 +415,7 @@ function isAnyOverlayOpen(){
   return cartDrawer.classList.contains('is-open') ||
          checkoutModal.classList.contains('is-open') ||
          productModal.classList.contains('is-open') ||
+         (typeof supportModal !== 'undefined' && supportModal.classList.contains('is-open')) ||
          nav.classList.contains('is-open');
 }
 /* Блокировка прокрутки страницы под открытыми окнами.
@@ -797,4 +798,143 @@ updateBranchPhoto();
   }
   window.addEventListener('scroll', spy, { passive:true });
   updateCartCount();
+})();
+
+
+/* ============================================
+   Поддержка: жалоба / возврат / отсутствующий товар / другой вопрос
+   Отправка в Telegram — ТЕМ ЖЕ способом, тем же ботом и в ту же группу, что и заказы
+   (используются те же TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID, новых ключей нет).
+   ============================================ */
+const supportModal = document.getElementById('supportModal');
+
+const SUPPORT_TYPES = {
+  complaint: { name:'⚠️ Жалоба',               title:'Жалоба',               hint:'Расскажите, что случилось — мы разберёмся.',          product:'optional', productLabel:'Название товара (если жалоба на товар)', textLabel:'Описание жалобы',                 ph:'Что произошло? Когда и где?' },
+  return:    { name:'↩️ Возврат товара',        title:'Возврат',              hint:'Укажите товар и причину возврата.',                    product:'required', productLabel:'Название товара',                         textLabel:'Причина возврата',                ph:'Почему хотите вернуть товар? Номер или дата заказа, если помните.' },
+  missing:   { name:'🔍 Отсутствующий товар',   title:'Отсутствующий товар',  hint:'Напишите, какой товар вы ищете — проверим наличие.',  product:'required', productLabel:'Название товара и бренд',                 textLabel:'Комментарий (необязательно)',     ph:'Объём, оттенок, где видели товар…', textOptional:true },
+  other:     { name:'💬 Другой вопрос',         title:'Другой вопрос',        hint:'Напишите ваш вопрос — ответим в WhatsApp.',            product:'none',     productLabel:'',                                         textLabel:'Ваш вопрос',                      ph:'Чем можем помочь?' }
+};
+
+let supportType = null;
+let supportLastSent = 0;
+
+function openSupport(){
+  showSupportStep(1);
+  supportModal.classList.add('is-open');
+  supportModal.setAttribute('aria-hidden', 'false');
+  lockScroll();
+}
+function closeSupport(){
+  supportModal.classList.remove('is-open');
+  supportModal.setAttribute('aria-hidden', 'true');
+  unlockScrollIfNeeded();
+}
+function showSupportStep(n){
+  document.getElementById('supportStep1').hidden = n !== 1;
+  document.getElementById('supportStep2').hidden = n !== 2;
+  document.getElementById('supportStep3').hidden = n !== 3;
+  supportModal.querySelector('.modal__card').scrollTop = 0;
+}
+function supportError(msg){
+  const el = document.getElementById('supportError');
+  el.textContent = msg || '';
+  el.hidden = !msg;
+}
+
+function normalizePhone(raw){
+  // оставляем цифры; 0XXXXXXXXX → +996XXXXXXXXX; 9 цифр без кода → +996…
+  let d = raw.replace(/\D/g, '');
+  if (d.length === 10 && d.startsWith('0')) d = '996' + d.slice(1);
+  else if (d.length === 9) d = '996' + d;
+  if (d.length < 11 || d.length > 15) return null;
+  if (d.startsWith('996') && d.length === 12) return `+996 ${d.slice(3,6)} ${d.slice(6,9)} ${d.slice(9)}`;
+  return '+' + d;
+}
+
+function buildSupportMessage(type, d){
+  const cfg = SUPPORT_TYPES[type];
+  const date = new Date().toLocaleString('ru-RU', { timeZone:'Asia/Bishkek', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }).replace(',', '');
+  return (
+    `🆘 НОВОЕ ОБРАЩЕНИЕ — HOLD LIVE\n\n` +
+    `📌 Тип: ${cfg.name}\n\n` +
+    `👤 Имя: ${d.name}\n\n` +
+    `📱 WhatsApp: ${d.phone}\n\n` +
+    (d.product ? `🛍 Товар: ${d.product}\n\n` : '') +
+    `📝 Описание: ${d.text || '—'}\n\n` +
+    `📅 Дата: ${date}`
+  );
+}
+
+// Тот же способ отправки, что и у заказов (sendOrderToTelegram), тот же бот и та же группа.
+async function sendSupportToTelegram(type, data){
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  try{
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: buildSupportMessage(type, data) })
+    });
+    if (!res.ok) throw new Error('Telegram API error: ' + res.status);
+    return true;
+  }catch(err){
+    console.error('Не удалось отправить обращение в Telegram:', err);
+    return false;
+  }
+}
+
+(function(){
+  const form = document.getElementById('supportStep2');
+
+  function selectSupportType(t){
+    supportType = t;
+    const c = SUPPORT_TYPES[t];
+    document.getElementById('supportFormTitle').textContent = c.title;
+    document.getElementById('supportFormHint').textContent = c.hint;
+    document.getElementById('supportTextLabel').textContent = c.textLabel;
+    document.getElementById('supportProductLabel').textContent = c.productLabel;
+    document.getElementById('supportProductWrap').hidden = c.product === 'none';
+    form.elements.text.placeholder = c.ph;
+    form.elements.product.value = c.product === 'none' ? '' : form.elements.product.value;
+    supportError('');
+    showSupportStep(2);
+  }
+
+  document.querySelectorAll('.support-type').forEach(b => b.addEventListener('click', () => selectSupportType(b.dataset.type)));
+  document.getElementById('supportBack').addEventListener('click', () => showSupportStep(1));
+  document.getElementById('supportOpen').addEventListener('click', openSupport);
+  document.getElementById('supportClose').addEventListener('click', closeSupport);
+  document.getElementById('supportDone').addEventListener('click', closeSupport);
+  supportModal.addEventListener('click', e => { if (e.target === supportModal) closeSupport(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && supportModal.classList.contains('is-open')) closeSupport(); });
+  document.getElementById('supportNavLink').addEventListener('click', e => { e.preventDefault(); openSupport(); });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    supportError('');
+    const c = SUPPORT_TYPES[supportType];
+    const name = form.elements.name.value.trim();
+    const product = c.product === 'none' ? '' : form.elements.product.value.trim();
+    const text = form.elements.text.value.trim();
+    const phone = normalizePhone(form.elements.phone.value);
+
+    if (name.length < 2){ supportError('Укажите ваше имя.'); form.elements.name.focus(); return; }
+    if (!phone){ supportError('Укажите корректный номер WhatsApp, например +996 700 123 456.'); form.elements.phone.focus(); return; }
+    if (c.product === 'required' && !product){ supportError('Укажите название товара.'); form.elements.product.focus(); return; }
+    if (!c.textOptional && text.length < 3){ supportError('Заполните описание обращения.'); form.elements.text.focus(); return; }
+    if (Date.now() - supportLastSent < 30000){ supportError('Обращение уже отправлено. Подождите немного перед следующим.'); return; }
+
+    const btn = document.getElementById('supportSubmit');
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Отправляем…';
+    const ok = await sendSupportToTelegram(supportType, { name, phone, product, text });
+    btn.disabled = false; btn.textContent = label;
+
+    if (ok){
+      supportLastSent = Date.now();
+      form.reset();
+      showSupportStep(3);
+    } else {
+      supportError('Не удалось отправить обращение. Проверьте интернет и попробуйте ещё раз.');
+    }
+  });
 })();
