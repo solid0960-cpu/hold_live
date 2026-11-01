@@ -298,6 +298,33 @@
   </div>
 </div>
 
+<!-- Нижнее меню как в приложении (только на телефоне) -->
+<nav class="tabbar" id="tabbar" aria-label="Быстрая навигация">
+  <button class="tabbar__item is-active" data-tab="home">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 11l8-6.5 8 6.5v8.5a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1V11z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    <span>Главная</span>
+  </button>
+  <button class="tabbar__item" data-tab="catalog">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6" stroke="currentColor" stroke-width="1.8"/></svg>
+    <span>Каталог</span>
+  </button>
+  <button class="tabbar__item" data-tab="search">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>Поиск</span>
+  </button>
+  <button class="tabbar__item" data-tab="cart">
+    <span class="tabbar__icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 4H5L5.5 6M5.5 6H20L18 13H7L5.5 6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="18" r="1.4" fill="currentColor"/><circle cx="17" cy="18" r="1.4" fill="currentColor"/></svg>
+      <b class="tabbar__badge" id="tabCartCount">0</b>
+    </span>
+    <span>Корзина</span>
+  </button>
+  <button class="tabbar__item" data-tab="branches">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s6.5-5.6 6.5-11A6.5 6.5 0 0 0 5.5 10c0 5.4 6.5 11 6.5 11z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.3" stroke="currentColor" stroke-width="1.8"/></svg>
+    <span>Филиалы</span>
+  </button>
+</nav>
+
 <script src="script.js"></script>
 </body>
 </html>
