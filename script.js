@@ -780,7 +780,7 @@ updateBranchPhoto();
     else if (k === 'catalog'){ go('catalog'); }
     else if (k === 'search'){ go('quick'); setTimeout(() => document.getElementById('searchInput').focus({ preventScroll:true }), 450); }
     else if (k === 'cart'){ openCart(); return; }
-    else if (k === 'branches'){ go('branches'); }
+    else if (k === 'support'){ openSupport(); return; }
     if (k !== 'cart') setActive(k);
   }));
 
@@ -791,7 +791,6 @@ updateBranchPhoto();
     const top = id => document.getElementById(id).getBoundingClientRect().top;
     let cur = 'home';
     if (top('quick') < mid) cur = 'search';
-    if (top('branches') < mid) cur = 'branches';
     if (top('catalog') < mid) cur = 'catalog';
     if (top('about') < mid) cur = 'home';
     setActive(cur);
