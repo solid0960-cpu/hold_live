@@ -1080,3 +1080,47 @@ html.is-scroll-locked{ overflow:hidden; }
 @media (max-width: 720px){
   .quick{ padding:32px 14px 0; }
 }
+
+
+/* ============================================
+   Нижнее меню (как в приложении) — только на телефоне
+   ============================================ */
+.tabbar{ display:none; }
+@media (max-width: 720px){
+  .tabbar{
+    display:flex;
+    position:fixed; left:0; right:0; bottom:0;
+    z-index:39;
+    background:var(--milk);
+    border-top:1px solid rgba(95,22,48,0.1);
+    box-shadow:0 -8px 24px rgba(95,22,48,0.08);
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+  }
+  .tabbar__item{
+    flex:1; min-width:0;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none;
+    padding:6px 0;
+    color:var(--ink-soft);
+    font-family:inherit; font-size:0.66rem; font-weight:700;
+    border-radius:14px;
+    transition:color .2s var(--ease), transform .15s var(--ease);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tabbar__item svg{ width:24px; height:24px; }
+  .tabbar__item:active{ transform:scale(.92); }
+  .tabbar__item.is-active{ color:var(--berry); }
+  .tabbar__item.is-active svg{ stroke-width:2.2; }
+  .tabbar__icon-wrap{ position:relative; display:inline-flex; }
+  .tabbar__badge{
+    position:absolute; top:-5px; right:-9px;
+    min-width:17px; height:17px; padding:0 4px;
+    border-radius:999px;
+    background:var(--berry); color:var(--white);
+    font-size:0.62rem; font-weight:800;
+    display:none; align-items:center; justify-content:center;
+    border:2px solid var(--milk); box-sizing:content-box;
+  }
+  /* чтобы низ страницы не прятался под меню */
+  body{ padding-bottom:calc(68px + env(safe-area-inset-bottom)); }
+}
