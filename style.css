@@ -1124,3 +1124,60 @@ html.is-scroll-locked{ overflow:hidden; }
   /* чтобы низ страницы не прятался под меню */
   body{ padding-bottom:calc(68px + env(safe-area-inset-bottom)); }
 }
+
+/* ============================================
+   Поддержка
+   ============================================ */
+.support{ max-width:1180px; margin:0 auto; padding:20px 24px 90px; scroll-margin-top:90px; }
+.support__cta{
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+  background:var(--milk);
+  border:1px solid rgba(95,22,48,0.06);
+  border-radius:var(--radius-l);
+  padding:36px 40px;
+  box-shadow:var(--shadow-soft);
+}
+.support__cta-title{ font-family:var(--font-display); font-size:1.7rem; color:var(--berry-dark); margin:0 0 6px; }
+.support__cta p{ margin:0; color:var(--ink-soft); line-height:1.6; max-width:560px; }
+.support__cta .btn{ flex-shrink:0; }
+
+.modal__card--support{ width:min(460px, 100%); overscroll-behavior:contain; }
+.support-lead{ margin:-8px 0 16px; color:var(--ink-soft); font-size:0.92rem; }
+.support-types{ display:flex; flex-direction:column; gap:10px; }
+.support-type{
+  display:flex; align-items:center; gap:14px; text-align:left;
+  padding:14px 16px;
+  background:var(--white);
+  border:1.5px solid var(--blush);
+  border-radius:var(--radius-m);
+  color:var(--ink); font-family:inherit;
+  transition:transform .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.support-type:hover{ transform:translateY(-2px); border-color:var(--berry); box-shadow:var(--shadow-soft); }
+.support-type:active{ transform:scale(.98); background:var(--blush-soft); }
+.support-type__icon{
+  width:46px; height:46px; flex-shrink:0; border-radius:50%;
+  background:var(--blush-soft);
+  display:flex; align-items:center; justify-content:center; font-size:1.35rem;
+}
+.support-type__body{ display:flex; flex-direction:column; gap:2px; }
+.support-type__body b{ font-family:var(--font-display); font-size:1.05rem; font-weight:600; }
+.support-type__body small{ font-size:0.78rem; color:var(--ink-soft); line-height:1.35; }
+
+.support-back{
+  align-self:flex-start; background:none; border:none; padding:2px 0;
+  color:var(--berry); font-weight:700; font-size:0.9rem; margin:-4px 0 -6px;
+}
+.support-form[hidden], .support-form [hidden]{ display:none !important; }
+.support-form input, .support-form textarea{ font-size:16px; } /* 16px — iPhone не приближает страницу при вводе */
+.support-form__error{
+  background:#FDECEF; color:#9B1C3A; border:1px solid #F3B7C4;
+  border-radius:var(--radius-s); padding:11px 14px; font-size:0.86rem; font-weight:600; line-height:1.45;
+}
+.support-form .btn:disabled{ opacity:.65; cursor:wait; transform:none; }
+
+@media (max-width: 720px){
+  .support{ padding:12px 14px 60px; }
+  .support__cta{ flex-direction:column; align-items:stretch; text-align:center; padding:28px 20px; gap:18px; }
+  .support__cta p{ margin:0 auto; }
+}
