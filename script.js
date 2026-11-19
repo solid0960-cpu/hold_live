@@ -156,12 +156,35 @@ const PRODUCTS = [
     desc:'Пенка удаляет загрязнения, ороговевшие клетки и излишки себума, не приводит к сухости и не вызывает ощущения стянутости. Главным активным компонентом является 30% экстракт центеллы азиатской. Подходит для всех типов кожи.' },
   { id:'p38',name:'SKIN1004 Madagascar Centella Light Cleansing Oil', cat:'cleansing', price:1020, oldPrice:null, icon:'🧼', tag:'new', stock:true,
     desc:'Гидрофильное масло растворяет макияж и загрязнения, также успокаивает и смягчает чувствительную кожу. Очищает поры, удаляет излишки себума и ороговевшие клетки. Основной компонент — 10% экстракт центеллы азиатской. Подходит для всех типов кожи.' },
-  { id:'p39',name:'SKIN1004 Madagascar Centella Toning Toner', cat:'toner', price:1050, oldPrice:null, icon:'💦', tag:'new', stock:true,
+  { id:'p39',name:'SKIN1004 Madagascar Centella Toning Toner 210 мл', cat:'toner', price:1050, oldPrice:null, icon:'💦', tag:'new', stock:true,
     desc:'Тонер смягчает, увлажняет и успокаивает кожу после умывания, оказывает мягкий пилинг-эффект и поддерживает чистоту кожи. Содержит PHA, ниацинамид и аденозин. Подходит для всех типов кожи.' },
   { id:'p40',name:'SKIN1004 Madagascar Centella Ampoule', cat:'serum', price:880, oldPrice:null, icon:'💧', tag:'new', stock:true,
     desc:'Ампула для лица содержит высококонцентрированный экстракт центеллы азиатской. Успокаивает раздражённую кожу, способствует восстановлению, снижает чувствительность и укрепляет сосуды. Подходит для всех типов кожи.' },
   { id:'p41',name:'SKIN1004 Madagascar Centella Quick Calming Pad', cat:'toner', price:1100, oldPrice:null, icon:'💦', tag:'new', stock:true,
     desc:'Успокаивающие пэды с 49% центеллы моментально снимают раздражение и покраснение, смягчают и восстанавливают кожу, снижают чувствительность к внешним раздражителям. Подходит для всех типов кожи.' },
+  { id:'p42',name:'SKIN1004 Madagascar Centella Toning Toner 400 мл', cat:'toner', price:1450, oldPrice:null, icon:'💦', tag:'new', stock:true,
+    photos:['images/products/p39.jpg'],
+    desc:'Тонер смягчает, увлажняет и успокаивает кожу после умывания, оказывает мягкий пилинг-эффект и поддерживает чистоту кожи. Содержит PHA, ниацинамид и аденозин. Подходит для всех типов кожи.' },
+  { id:'p43',name:'SKIN1004 Madagascar Centella Cream', cat:'cream', price:1180, oldPrice:null, icon:'🧴', tag:'new', stock:true,
+    desc:'Питательный крем наполняет кожу влагой, устраняет сухость, шелушение и чувство стянутости, укрепляет естественный защитный барьер, смягчает и разглаживает. Главным действующим компонентом является 9,8% экстракт центеллы азиатской. Подходит для всех типов кожи.' },
+  { id:'p44',name:'SKIN1004 Madagascar Centella Soothing Cream', cat:'cream', price:1100, oldPrice:null, icon:'🧴', tag:'new', stock:true,
+    desc:'Охлаждающий защитный крем снимает раздражение и покраснение, смягчает, стимулирует процесс восстановления и устраняет шелушение. Содержит 72% экстракт центеллы азиатской, церамиды, транексамовую кислоту. Подходит для комбинированной кожи.' },
+  { id:'p45',name:'SKIN1004 Madagascar Centella Teca Soothing Toner', cat:'toner', price:1050, oldPrice:null, icon:'💦', tag:'new', stock:true,
+    note:'📍 Сейчас в наличии во всех филиалах, кроме Айтматова',
+    desc:'Усиленный тонер с центеллой и ПДРН восстанавливает, успокаивает и смягчает после умывания, разглаживает и придаёт сияние. Избавляет от сухости и чувства стянутости, уменьшает покраснение и раздражение. Помимо центеллы и ПДРН ещё входит LHA, цинк, пантенол и стволовые клетки яблока. Подходит для всех типов кожи, чувствительной и обезвоженной.' },
+  { id:'p46',name:'SKIN1004 Madagascar Centella Teca Ampoule', cat:'serum', price:880, oldPrice:null, icon:'💧', tag:'new', stock:true,
+    desc:'Усиленная версия классической ампулы с восстанавливающим и антивозрастным действием. Укрепляет защитный барьер, повышает эластичность и разглаживает рельеф. Содержит комплекс центеллы TECA, ПДРН, пептиды, коллаген, пробиотики и PHA. Подходит для всех типов кожи, особенно для зрелой.' },
+  { id:'p47',name:'SKIN1004 Madagascar Centella Teca Cream', cat:'cream', price:1050, oldPrice:null, icon:'🧴', tag:'new', stock:true,
+    desc:'Усиленный крем с центеллой и ПДРН оказывает мощное восстанавливающее действие, повышает плотность и упругость, придаёт коже сияние и гладкий рельеф, избавляет от сухости, успокаивает раздражение. Входит комплекс центеллы TECA, ПДРН, ниацинамид, альфа-арбутин. Подходит для чувствительной, раздражённой кожи.' },
+  { id:'p48',name:'SKIN1004 Madagascar Centella Probio-Cica Enrich Cream 50 мл', cat:'cream', price:1200, oldPrice:null, icon:'🧴', tag:'new', stock:true,
+    desc:'Ламеллярный крем укрепляет липидный барьер и усиливает защитные функции и подавляет рост бактерий. Интенсивно питает, устраняет сухость и шелушение. Содержит экстракт центеллы азиатской, масла макадамии и моринги, сквалан и церамиды. Подходит для сухой, нормальной и чувствительной кожи.' },
+  { id:'p49',name:'SKIN1004 Madagascar Centella Probio-Cica Enrich Cream 15 мл', cat:'cream', price:380, oldPrice:null, icon:'🧴', tag:'new', stock:true,
+    photos:['images/products/p48.jpg'],
+    desc:'Ламеллярный крем укрепляет липидный барьер и усиливает защитные функции и подавляет рост бактерий. Интенсивно питает, устраняет сухость и шелушение. Содержит экстракт центеллы азиатской, масла макадамии и моринги, сквалан и церамиды. Подходит для сухой, нормальной и чувствительной кожи.' },
+  { id:'p50',name:'SKIN1004 Madagascar Centella Probio-Cica Essence Toner', cat:'toner', price:1080, oldPrice:null, icon:'💦', tag:'new', stock:true,
+    desc:'Тонер-эссенция с пробиотиками восстанавливает кислотно-щелочной баланс и поддерживает здоровую микробиоту кожи, блокируя рост и развитие бактерий. Мгновенно восполняет недостаток влаги. Содержит экстракт центеллы азиатской, гиалуроновую кислоту и трегалозу. Подходит для сухой, нормальной и комбинированной кожи.' },
+  { id:'p51',name:'SKIN1004 Madagascar Centella Probio-Cica Intensive Ampoule', cat:'serum', price:1050, oldPrice:null, icon:'💧', tag:'new', stock:true,
+    desc:'Ампула с пробиотиками обладает выраженным восстанавливающим действием, укрепляет барьерные функции, стимулирует заживление мелких воспалений и снижает чувствительность. Входит экстракт центеллы азиатской, церамиды, масло макадамии. Подходит для сухой, нормальной и чувствительной кожи.' },
 ];
 
 /* ============================================
@@ -285,7 +308,7 @@ function renderCatalog(){
     <article class="product-card" style="animation-delay:${Math.min(i * 0.04, 0.4)}s">
       <div class="product-card__media" data-view="${p.id}">
         ${p.tag ? `<span class="product-card__tag product-card__tag--${p.tag}">${p.tag === 'new' ? 'Новинка' : 'Акция'}</span>` : ''}
-        <img src="images/products/${p.id}.jpg" alt="${p.name}" class="product-card__photo" loading="lazy" decoding="async"
+        <img src="${(p.photos && p.photos[0]) || `images/products/${p.id}.jpg`}" alt="${p.name}" class="product-card__photo" loading="lazy" decoding="async"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <span class="product-card__icon-fallback">${p.icon}</span>
       </div>
@@ -642,6 +665,9 @@ function renderProductModal(){
   document.getElementById('productModalName').textContent = p.name;
   document.getElementById('productModalDesc').textContent = p.desc || 'Описание уточняется — напишите нам, и мы подскажем состав и особенности средства.';
   document.getElementById('productModalFallbackIcon').textContent = p.icon;
+  const noteEl = document.getElementById('productModalNote');
+  noteEl.textContent = p.note || '';
+  noteEl.hidden = !p.note;
 
   document.getElementById('productModalPrice').innerHTML =
     (p.oldPrice ? `<del>${fmt(p.oldPrice)}</del>` : '') + fmt(p.price);
@@ -728,7 +754,7 @@ function renderQuick(){
   strip.innerHTML = fresh.map(p => `
     <button class="mini-card" data-view="${p.id}">
       <span class="mini-card__media">
-        <img src="images/products/${p.id}.jpg" alt="${p.name}" loading="lazy"
+        <img src="${(p.photos && p.photos[0]) || `images/products/${p.id}.jpg`}" alt="${p.name}" loading="lazy"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <span class="mini-card__fallback">${p.icon}</span>
       </span>
