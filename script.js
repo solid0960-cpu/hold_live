@@ -95,6 +95,95 @@ const CATEGORIES = [
   { id: 'set',        label: 'Наборы',                icon: '🎁' },
 ];
 
+/* ============================================
+   НАЛИЧИЕ ПО ФИЛИАЛАМ
+   Чтобы показать наличие, добавьте товар в STOCK. Порядок филиалов:
+     chuy — пр-т Чуй 140, beta — Бета Сторес, tsum — ЦУМ, aitmatova — Айтматова 80
+   Значения:  число (например 5) — «в наличии, 5 шт»;  true — «в наличии» (без числа);
+              0 или false — «нет в наличии».
+   Если все филиалы = 0/false, на карточке будет «Нет в наличии», кнопка «+» отключится.
+   Товары, которых нет в STOCK, считаются «В наличии» (как раньше).
+   Пример:  p12: { chuy:5, beta:0, tsum:2, aitmatova:true },
+   ============================================ */
+const BRANCH_KEYS = ['chuy', 'beta', 'tsum', 'aitmatova'];
+// ⚠ ПРИМЕРНЫЕ ЦИФРЫ — замените на реальные остатки перед публикацией
+const STOCK = {
+  p1: { chuy:4, beta:1, tsum:5, aitmatova:12 },
+  p2: { chuy:0, beta:0, tsum:8, aitmatova:0 },
+  p3: { chuy:4, beta:10, tsum:0, aitmatova:8 },
+  p4: { chuy:2, beta:0, tsum:0, aitmatova:5 },
+  p5: { chuy:0, beta:0, tsum:0, aitmatova:0 },
+  p6: { chuy:8, beta:5, tsum:0, aitmatova:10 },
+  p7: { chuy:0, beta:2, tsum:12, aitmatova:12 },
+  p8: { chuy:10, beta:0, tsum:10, aitmatova:10 },
+  p9: { chuy:5, beta:0, tsum:2, aitmatova:0 },
+  p10: { chuy:8, beta:1, tsum:3, aitmatova:5 },
+  p11: { chuy:1, beta:8, tsum:0, aitmatova:10 },
+  p12: { chuy:3, beta:8, tsum:12, aitmatova:1 },
+  p13: { chuy:0, beta:10, tsum:10, aitmatova:12 },
+  p14: { chuy:2, beta:4, tsum:0, aitmatova:8 },
+  p15: { chuy:0, beta:10, tsum:0, aitmatova:10 },
+  p16: { chuy:2, beta:6, tsum:12, aitmatova:8 },
+  p17: { chuy:5, beta:4, tsum:6, aitmatova:10 },
+  p18: { chuy:6, beta:4, tsum:3, aitmatova:2 },
+  p19: { chuy:1, beta:2, tsum:0, aitmatova:10 },
+  p20: { chuy:3, beta:8, tsum:6, aitmatova:4 },
+  p21: { chuy:6, beta:3, tsum:10, aitmatova:0 },
+  p22: { chuy:0, beta:8, tsum:5, aitmatova:1 },
+  p23: { chuy:4, beta:1, tsum:6, aitmatova:5 },
+  p24: { chuy:0, beta:12, tsum:0, aitmatova:8 },
+  p25: { chuy:10, beta:4, tsum:4, aitmatova:4 },
+  p26: { chuy:10, beta:6, tsum:10, aitmatova:6 },
+  p27: { chuy:0, beta:0, tsum:3, aitmatova:6 },
+  p28: { chuy:12, beta:0, tsum:0, aitmatova:3 },
+  p29: { chuy:12, beta:10, tsum:12, aitmatova:6 },
+  p30: { chuy:3, beta:5, tsum:12, aitmatova:4 },
+  p31: { chuy:0, beta:6, tsum:4, aitmatova:1 },
+  p32: { chuy:10, beta:0, tsum:6, aitmatova:0 },
+  p33: { chuy:2, beta:3, tsum:1, aitmatova:2 },
+  p34: { chuy:5, beta:5, tsum:6, aitmatova:0 },
+  p35: { chuy:1, beta:6, tsum:5, aitmatova:8 },
+  p36: { chuy:3, beta:1, tsum:5, aitmatova:8 },
+  p37: { chuy:3, beta:5, tsum:4, aitmatova:12 },
+  p38: { chuy:5, beta:2, tsum:1, aitmatova:0 },
+  p39: { chuy:1, beta:1, tsum:2, aitmatova:12 },
+  p40: { chuy:2, beta:0, tsum:6, aitmatova:10 },
+  p41: { chuy:1, beta:3, tsum:3, aitmatova:0 },
+  p42: { chuy:1, beta:5, tsum:8, aitmatova:4 },
+  p43: { chuy:10, beta:10, tsum:4, aitmatova:1 },
+  p44: { chuy:8, beta:10, tsum:12, aitmatova:12 },
+  p45: { chuy:true, beta:true, tsum:true, aitmatova:false },
+  p46: { chuy:0, beta:6, tsum:12, aitmatova:8 },
+  p47: { chuy:5, beta:5, tsum:5, aitmatova:5 },
+  p48: { chuy:0, beta:6, tsum:12, aitmatova:5 },
+  p49: { chuy:0, beta:2, tsum:0, aitmatova:2 },
+  p50: { chuy:6, beta:1, tsum:0, aitmatova:4 },
+  p51: { chuy:10, beta:0, tsum:0, aitmatova:0 },
+};
+
+// [{address, qty}] qty: число | null (есть, количество не указано) | 0 (нет); или null, если для товара наличие не задано
+function branchStock(p){
+  const s = STOCK[p.id];
+  if (!s) return null;
+  const rows = [];
+  BRANCH_KEYS.forEach((k, i) => {
+    if (!(k in s) || !BRANCHES[i]) return;
+    const v = s[k];
+    rows.push({ address: BRANCHES[i].address, qty: typeof v === 'number' ? v : (v ? null : 0) });
+  });
+  return rows.length ? rows : null;
+}
+function stockTotalLabel(p){
+  const rows = branchStock(p);
+  if (!rows || rows.some(r => r.qty === null)) return '';
+  const t = rows.reduce((a, r) => a + r.qty, 0);
+  return t > 0 ? ` · ${t} шт` : '';
+}
+function isInStock(p){
+  const rows = branchStock(p);
+  return rows ? rows.some(r => r.qty !== 0) : p.stock !== false;
+}
+
 const PRODUCTS = [
   { id:'p1', name:'Стойкий тональный крем Fit Me',     cat:'foundation',  price:1450, oldPrice:null, icon:'🧴', tag:'new',  stock:true },
   { id:'p2', name:'Матовая тональная основа Air Fit',   cat:'foundation',  price:1690, oldPrice:1950, icon:'🧴', tag:'sale', stock:true },
@@ -170,7 +259,6 @@ const PRODUCTS = [
   { id:'p44',name:'SKIN1004 Madagascar Centella Soothing Cream', cat:'cream', price:1100, oldPrice:null, icon:'🧴', tag:'new', stock:true,
     desc:'Охлаждающий защитный крем снимает раздражение и покраснение, смягчает, стимулирует процесс восстановления и устраняет шелушение. Содержит 72% экстракт центеллы азиатской, церамиды, транексамовую кислоту. Подходит для комбинированной кожи.' },
   { id:'p45',name:'SKIN1004 Madagascar Centella Teca Soothing Toner', cat:'toner', price:1050, oldPrice:null, icon:'💦', tag:'new', stock:true,
-    note:'📍 Сейчас в наличии во всех филиалах, кроме Айтматова',
     desc:'Усиленный тонер с центеллой и ПДРН восстанавливает, успокаивает и смягчает после умывания, разглаживает и придаёт сияние. Избавляет от сухости и чувства стянутости, уменьшает покраснение и раздражение. Помимо центеллы и ПДРН ещё входит LHA, цинк, пантенол и стволовые клетки яблока. Подходит для всех типов кожи, чувствительной и обезвоженной.' },
   { id:'p46',name:'SKIN1004 Madagascar Centella Teca Ampoule', cat:'serum', price:880, oldPrice:null, icon:'💧', tag:'new', stock:true,
     desc:'Усиленная версия классической ампулы с восстанавливающим и антивозрастным действием. Укрепляет защитный барьер, повышает эластичность и разглаживает рельеф. Содержит комплекс центеллы TECA, ПДРН, пептиды, коллаген, пробиотики и PHA. Подходит для всех типов кожи, особенно для зрелой.' },
@@ -305,7 +393,7 @@ function renderCatalog(){
   grid.innerHTML = list.map((p, i) => {
     const qty = cart[p.id] || 0;
     return `
-    <article class="product-card" style="animation-delay:${Math.min(i * 0.04, 0.4)}s">
+    <article class="product-card${isInStock(p) ? '' : ' is-out'}" style="animation-delay:${Math.min(i * 0.04, 0.4)}s">
       <div class="product-card__media" data-view="${p.id}">
         ${p.tag ? `<span class="product-card__tag product-card__tag--${p.tag}">${p.tag === 'new' ? 'Новинка' : 'Акция'}</span>` : ''}
         <img src="${(p.photos && p.photos[0]) || `images/products/${p.id}.jpg`}" alt="${p.name}" class="product-card__photo" loading="lazy" decoding="async"
@@ -315,13 +403,15 @@ function renderCatalog(){
       <div class="product-card__body">
         <span class="product-card__cat">${CATEGORIES.find(c=>c.id===p.cat).label}</span>
         <h3 class="product-card__name" data-view="${p.id}">${p.name}</h3>
-        <span class="product-card__stock">✓ В наличии</span>
+        <span class="product-card__stock${isInStock(p) ? '' : ' is-out'}">${isInStock(p) ? '✓ В наличии' + stockTotalLabel(p) : 'Нет в наличии'}</span>
         <div class="product-card__row">
           <span class="product-card__price">
             ${p.oldPrice ? `<del>${fmt(p.oldPrice)}</del>` : ''}${fmt(p.price)}
           </span>
           <div class="product-card__control" data-id="${p.id}">
-            ${qty > 0 ? qtyControlHTML(p.id, qty) : `<button class="add-btn" data-add="${p.id}" aria-label="Добавить в корзину">+</button>`}
+            ${qty > 0 ? qtyControlHTML(p.id, qty) : (isInStock(p)
+              ? `<button class="add-btn" data-add="${p.id}" aria-label="Добавить в корзину">+</button>`
+              : `<button class="add-btn" disabled aria-label="Нет в наличии">+</button>`)}
           </div>
         </div>
       </div>
@@ -362,6 +452,8 @@ function bindQtyControls(scope){
    Логика корзины
    ============================================ */
 function addToCart(id, bump = true){
+  const _p = getProduct(id);
+  if (_p && !isInStock(_p)) return;
   cart[id] = (cart[id] || 0) + 1;
   onCartChange(bump);
 }
@@ -665,6 +757,21 @@ function renderProductModal(){
   document.getElementById('productModalName').textContent = p.name;
   document.getElementById('productModalDesc').textContent = p.desc || 'Описание уточняется — напишите нам, и мы подскажем состав и особенности средства.';
   document.getElementById('productModalFallbackIcon').textContent = p.icon;
+  // наличие по филиалам
+  const inStock = isInStock(p);
+  const stockEl = document.getElementById('productModalStock');
+  stockEl.textContent = inStock ? '✓ В наличии' : 'Нет в наличии';
+  stockEl.classList.toggle('is-out', !inStock);
+  const brEl = document.getElementById('productModalBranches');
+  const rows = branchStock(p);
+  if (rows){
+    brEl.innerHTML = '<span class="product-modal__branches-title">Наличие в филиалах</span>' + rows.map(r => {
+      const has = r.qty !== 0;
+      const label = r.qty === null ? 'в наличии' : (r.qty === 0 ? 'нет в наличии' : `в наличии, ${r.qty} шт`);
+      return `<div class="branch-stock ${has ? 'is-yes' : 'is-no'}"><span class="branch-stock__addr">${r.address}</span><span class="branch-stock__state">${has ? '✓' : '✕'} ${label}</span></div>`;
+    }).join('');
+    brEl.hidden = false;
+  } else { brEl.innerHTML = ''; brEl.hidden = true; }
   const noteEl = document.getElementById('productModalNote');
   noteEl.textContent = p.note || '';
   noteEl.hidden = !p.note;
@@ -675,7 +782,9 @@ function renderProductModal(){
   const qty = cart[p.id] || 0;
   document.getElementById('productModalControl').innerHTML = qty > 0
     ? qtyControlHTML(p.id, qty)
-    : `<button class="add-btn" data-add="${p.id}" aria-label="Добавить в корзину">+</button>`;
+    : (inStock
+        ? `<button class="add-btn" data-add="${p.id}" aria-label="Добавить в корзину">+</button>`
+        : `<button class="add-btn" disabled aria-label="Нет в наличии">+</button>`);
   bindQtyControls(document.getElementById('productModalControl'));
   document.getElementById('productModalControl').querySelectorAll('[data-add]').forEach(btn => {
     btn.addEventListener('click', () => { addToCart(btn.dataset.add); renderProductModal(); });
