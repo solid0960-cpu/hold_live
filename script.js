@@ -173,6 +173,14 @@ function branchStock(p){
   });
   return rows.length ? rows : null;
 }
+// 'all' | 'some' | 'none' | 'unknown'
+function stockLevel(p){
+  const rows = branchStock(p);
+  if (!rows) return p.stock === false ? 'none' : 'unknown';
+  const n = rows.filter(r => r.qty !== 0).length;
+  return n === rows.length ? 'all' : (n === 0 ? 'none' : 'some');
+}
+const STOCK_TEXT = { all:'✓ В наличии во всех филиалах', some:'● В наличии в некоторых филиалах', none:'Нет в наличии', unknown:'✓ В наличии' };
 function stockTotalLabel(p){
   const rows = branchStock(p);
   if (!rows || rows.some(r => r.qty === null)) return '';
@@ -403,7 +411,7 @@ function renderCatalog(){
       <div class="product-card__body">
         <span class="product-card__cat">${CATEGORIES.find(c=>c.id===p.cat).label}</span>
         <h3 class="product-card__name" data-view="${p.id}">${p.name}</h3>
-        <span class="product-card__stock${isInStock(p) ? '' : ' is-out'}">${isInStock(p) ? '✓ В наличии' + stockTotalLabel(p) : 'Нет в наличии'}</span>
+        <span class="product-card__stock is-${stockLevel(p)}">${STOCK_TEXT[stockLevel(p)]}</span>
         <div class="product-card__row">
           <span class="product-card__price">
             ${p.oldPrice ? `<del>${fmt(p.oldPrice)}</del>` : ''}${fmt(p.price)}
@@ -760,8 +768,8 @@ function renderProductModal(){
   // наличие по филиалам
   const inStock = isInStock(p);
   const stockEl = document.getElementById('productModalStock');
-  stockEl.textContent = inStock ? '✓ В наличии' : 'Нет в наличии';
-  stockEl.classList.toggle('is-out', !inStock);
+  stockEl.textContent = STOCK_TEXT[stockLevel(p)];
+  stockEl.className = 'product-card__stock is-' + stockLevel(p);
   const brEl = document.getElementById('productModalBranches');
   const rows = branchStock(p);
   if (rows){
