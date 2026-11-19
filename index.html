@@ -36,6 +36,7 @@
       <a href="#catalog" data-filter="all">Все товары</a>
       <a href="#catalog" data-filter="new">Новинки</a>
       <a href="#catalog" data-filter="sale">Акции</a>
+      <a href="#brands">Бренды</a>
       <a href="#about">О нас</a>
       <a href="#delivery">Доставка</a>
       <a href="#support" id="supportNavLink">Поддержка</a>
@@ -139,6 +140,20 @@
   </div>
 </section>
 
+<!-- Наши бренды -->
+<section class="brands" id="brands">
+  <div class="brands__head">
+    <div>
+      <h2 class="section-title">Наши бренды</h2>
+      <p class="brands__sub">Выберите бренд — ниже покажем только его товары</p>
+    </div>
+    <button class="brands__reset" id="brandReset" type="button" hidden>Все бренды ✕</button>
+  </div>
+  <div class="brands__row" id="brandRow">
+    <!-- карточки брендов через JS -->
+  </div>
+</section>
+
 <!-- Каталог -->
 <section class="catalog" id="catalog">
   <div class="catalog__head">
@@ -148,6 +163,14 @@
       <button class="chip" data-filter="new">Новинки</button>
       <button class="chip" data-filter="sale">Акции</button>
     </div>
+  </div>
+  <div class="catalog__bar" id="catalogBar">
+    <label class="catalog__search">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="catalogSearch" placeholder="Найти товар по названию" autocomplete="off" enterkeyhint="search" aria-label="Поиск товаров">
+      <button type="button" class="catalog__search-clear" id="catalogSearchClear" aria-label="Очистить поиск" hidden>✕</button>
+    </label>
+    <button type="button" class="brand-chip" id="brandChip" hidden></button>
   </div>
   <div class="catalog__grid" id="catalogGrid">
     <!-- карточки товаров через JS -->
