@@ -1201,7 +1201,7 @@ html.is-scroll-locked{ overflow:hidden; }
 .add-btn:disabled:hover, .add-btn:disabled:active{ background:#CDBFC3; transform:none; }
 
 .product-modal__branches{
-  margin:0 0 14px; paddqing:12px 14px;
+  margin:0 0 14px; padding:12px 14px;
   background:var(--blush-soft);
   border-radius:var(--radius-s);
   display:flex; flex-direction:column; gap:8px;
@@ -1216,3 +1216,9 @@ html.is-scroll-locked{ overflow:hidden; }
 @media (max-width: 420px){
   .branch-stock{ flex-direction:column; gap:1px; }
 }
+
+/* уровни наличия */
+.product-card__stock.is-all{ color:#3f8a4c; }
+.product-card__stock.is-some{ color:#B7791F; }
+.product-card__stock.is-none{ color:#B3364F; }
+.product-card__stock{ line-height:1.3; }
