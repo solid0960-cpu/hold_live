@@ -331,6 +331,27 @@ async function sendOrderToTelegram(orderItems, total, customer){
    ============================================ */
 let activeFilter = 'all';   // all | new | sale | category id
 let searchQuery = '';       // текст из строки поиска
+/* ============================================
+   БРЕНДЫ
+   Бренд товара определяется по началу названия (или полем brand:'id' у товара).
+   Официальные логотипы: положите файлы в images/brands/ (roundlab.png, romand.png,
+   skin1004.png). Пока файла нет — показывается текстовое название бренда.
+   ============================================ */
+const BRANDS = [
+  { id:'roundlab', name:'ROUND LAB', match:['round lab','roundlab'], logo:'images/brands/roundlab.png', style:'roundlab' },
+  { id:'romand',   name:'rom&nd',    match:['rom&nd','romand'],      logo:'images/brands/romand.png',   style:'romand' },
+  { id:'skin1004', name:'SKIN1004',  match:['skin1004'],             logo:'images/brands/skin1004.png', style:'skin1004' },
+];
+function brandOf(p){
+  if (p.brand) return p.brand;
+  const n = p.name.toLowerCase();
+  const b = BRANDS.find(b => b.match.some(m => n.startsWith(m)));
+  return b ? b.id : null;
+}
+const brandCount = id => PRODUCTS.filter(p => brandOf(p) === id).length;
+function plural(n, a, b, c){ const m = n % 100, d = n % 10; return (m > 10 && m < 20) ? c : d === 1 ? a : (d >= 2 && d <= 4) ? b : c; }
+let activeBrand = null;
+
 let cart = {};              // { productId: qty }
 
 /* ============================================
@@ -382,6 +403,7 @@ function syncFilterUI(){
    Рендер каталога
    ============================================ */
 function matchesFilter(p){
+  if (activeBrand && brandOf(p) !== activeBrand) return false;
   if (searchQuery && !p.name.toLowerCase().includes(searchQuery)) return false;
   if (activeFilter === 'all') return true;
   if (activeFilter === 'new') return p.tag === 'new';
@@ -393,8 +415,15 @@ function renderCatalog(){
   const grid = document.getElementById('catalogGrid');
   const list = PRODUCTS.filter(matchesFilter);
 
+  syncCatalogBar();
   if (!list.length){
-    grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:var(--ink-soft);">Ничего не найдено в этой категории.</p>`;
+    const b = BRANDS.find(x => x.id === activeBrand);
+    if (b && brandCount(b.id) === 0){
+      grid.innerHTML = `<div class="empty"><span class="empty__mark">✦</span><h3>${b.name} скоро в HOLD LIVE</h3><p>Товары этого бренда пока готовим. Загляните позже или выберите другой бренд.</p><button type="button" class="btn btn--primary" data-empty-reset>Смотреть все товары</button></div>`;
+    } else {
+      grid.innerHTML = `<div class="empty"><span class="empty__mark">🔍</span><h3>Ничего не найдено</h3><p>${searchQuery ? 'Попробуйте изменить запрос или' : 'Попробуйте'} выбрать другой бренд или категорию.</p><button type="button" class="btn btn--primary" data-empty-reset>Сбросить фильтры</button></div>`;
+    }
+    grid.querySelector('[data-empty-reset]').addEventListener('click', resetAllFilters);
     return;
   }
 
@@ -486,6 +515,7 @@ function onCartChange(bump){
 }
 
 function updateCartCount(bump){
+  saveCart();
   const el = document.getElementById('cartCount');
   el.textContent = cartCount();
   const tc = document.getElementById('tabCartCount');
@@ -902,6 +932,124 @@ searchInput.addEventListener('keydown', e => {
     document.getElementById('catalog').scrollIntoView({ behavior:'smooth', block:'start' });
   }
 });
+
+/* ============================================
+   Запоминание на устройстве клиента (localStorage):
+   корзина + имя, телефон, адрес. Данные никуда не отправляются.
+   ============================================ */
+const LS_CART = 'hl_cart_v1', LS_CONTACT = 'hl_contact_v1';
+function lsGet(k){ try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; } }
+function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function saveCart(){ lsSet(LS_CART, cart); }
+function loadCart(){
+  const saved = lsGet(LS_CART);
+  if (!saved || typeof saved !== 'object') return;
+  Object.keys(saved).forEach(id => {
+    const q = parseInt(saved[id], 10);
+    const p = getProduct(id);
+    if (p && q > 0 && isInStock(p)) cart[id] = Math.min(q, 99);
+  });
+}
+function bindContactMemory(formId, fields){
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const fill = () => {
+    const c = lsGet(LS_CONTACT) || {};
+    fields.forEach(n => {
+      const el = form.elements[n];
+      if (el && !el.value && c[n]) el.value = c[n];
+    });
+  };
+  form.addEventListener('focusin', fill);
+  fill();
+  form.addEventListener('input', e => {
+    const n = e.target && e.target.name;
+    if (!fields.includes(n)) return;
+    const c = lsGet(LS_CONTACT) || {};
+    c[n] = e.target.value.trim();
+    lsSet(LS_CONTACT, c);
+  });
+}
+/* ============================================
+   Бренды: карточки, фильтр, поиск в каталоге
+   ============================================ */
+function resetAllFilters(){
+  activeBrand = null; activeFilter = 'all'; searchQuery = '';
+  const si = document.getElementById('searchInput'); if (si) si.value = '';
+  syncFilterUI(); syncBrandUI(); renderCatalog();
+}
+function renderBrands(){
+  const row = document.getElementById('brandRow');
+  row.innerHTML = BRANDS.map(b => {
+    const n = brandCount(b.id);
+    return `<button type="button" class="brand-card brand-card--${b.style}" data-brand="${b.id}" aria-pressed="false">
+      <span class="brand-card__logo">
+        <img src="${b.logo}" alt="${b.name}" loading="lazy" decoding="async" onerror="this.remove()">
+        <span class="brand-card__word">${b.name}</span>
+      </span>
+      <span class="brand-card__meta">${n ? `${n} ${plural(n, 'товар', 'товара', 'товаров')}` : 'Скоро'}</span>
+    </button>`;
+  }).join('');
+  row.querySelectorAll('.brand-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectBrand(activeBrand === btn.dataset.brand ? null : btn.dataset.brand, true);
+    });
+  });
+  // если логотип загрузился — прячем текстовое название
+  row.querySelectorAll('.brand-card__logo img').forEach(img => {
+    const ok = () => img.parentElement.classList.add('has-logo');
+    if (img.complete && img.naturalWidth) ok(); else img.addEventListener('load', ok);
+  });
+}
+function selectBrand(id, scroll){
+  activeBrand = id;
+  activeFilter = 'all';
+  syncFilterUI(); syncBrandUI(); renderCatalog();
+  if (scroll) document.getElementById('catalog').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+function syncBrandUI(){
+  document.querySelectorAll('.brand-card').forEach(c => {
+    const on = c.dataset.brand === activeBrand;
+    c.classList.toggle('is-active', on);
+    c.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  document.getElementById('brandReset').hidden = !activeBrand;
+}
+function syncCatalogBar(){
+  const cs = document.getElementById('catalogSearch');
+  if (!cs) return;
+  if (cs.value.trim().toLowerCase() !== searchQuery) cs.value = searchQuery;
+  document.getElementById('catalogSearchClear').hidden = !cs.value;
+  const si = document.getElementById('searchInput');
+  if (si && si.value.trim().toLowerCase() !== searchQuery) si.value = searchQuery;
+  const chip = document.getElementById('brandChip');
+  const b = BRANDS.find(x => x.id === activeBrand);
+  chip.hidden = !b;
+  if (b) chip.innerHTML = `${b.name} <span aria-hidden="true">✕</span>`;
+  if (b) chip.setAttribute('aria-label', `Сбросить бренд ${b.name}`);
+}
+(function initBrands(){
+  renderBrands();
+  document.getElementById('brandReset').addEventListener('click', () => selectBrand(null, false));
+  document.getElementById('brandChip').addEventListener('click', () => selectBrand(null, false));
+  const cs = document.getElementById('catalogSearch');
+  cs.addEventListener('input', () => {
+    searchQuery = cs.value.trim().toLowerCase();
+    if (searchQuery) activeFilter = 'all';
+    syncFilterUI(); renderCatalog();
+  });
+  cs.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); cs.blur(); } });
+  document.getElementById('catalogSearchClear').addEventListener('click', () => {
+    searchQuery = ''; cs.value = ''; renderCatalog(); cs.focus();
+  });
+  const header = document.querySelector('.header');
+  const setH = () => document.documentElement.style.setProperty('--header-h', (header ? header.offsetHeight : 64) + 'px');
+  setH(); window.addEventListener('resize', setH); window.addEventListener('load', setH);
+})();
+
+loadCart();
+bindContactMemory('checkoutStep2', ['name', 'phone', 'address']);
+bindContactMemory('supportStep2', ['name', 'phone']);
 
 renderCategories();
 renderQuick();
