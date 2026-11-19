@@ -1190,3 +1190,29 @@ html.is-scroll-locked{ overflow:hidden; }
   font-size:0.84rem; font-weight:700; line-height:1.4;
 }
 .product-modal__note[hidden]{ display:none; }
+
+
+/* Наличие по филиалам / нет в наличии */
+.product-card__stock.is-out, .product-card__stock.is-out#productModalStock{ color:#B3364F; }
+#productModalStock.is-out{ color:#B3364F; }
+.product-card.is-out .product-card__photo{ opacity:.5; filter:grayscale(.6); }
+.product-card.is-out .product-card__name{ color:var(--ink-soft); }
+.add-btn:disabled{ background:#CDBFC3; box-shadow:none; cursor:not-allowed; transform:none; }
+.add-btn:disabled:hover, .add-btn:disabled:active{ background:#CDBFC3; transform:none; }
+
+.product-modal__branches{
+  margin:0 0 14px; paddqing:12px 14px;
+  background:var(--blush-soft);
+  border-radius:var(--radius-s);
+  display:flex; flex-direction:column; gap:8px;
+}
+.product-modal__branches[hidden]{ display:none; }
+.product-modal__branches-title{ font-size:0.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--berry); }
+.branch-stock{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:0.86rem; line-height:1.35; }
+.branch-stock__addr{ font-weight:700; color:var(--ink); }
+.branch-stock__state{ font-weight:700; white-space:nowrap; }
+.branch-stock.is-yes .branch-stock__state{ color:#3f8a4c; }
+.branch-stock.is-no .branch-stock__state{ color:#B3364F; }
+@media (max-width: 420px){
+  .branch-stock{ flex-direction:column; gap:1px; }
+}
