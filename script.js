@@ -662,7 +662,23 @@ overlay.addEventListener('click', () => { closeCart(); closeCheckout(); closeMob
    ============================================ */
 const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
-const navBackdrop = document.getElementById('navBackdrop');
+const navBackdrop = document.getElementById('navBackdrop') || (() => {
+  const d = document.createElement('div');
+  d.id = 'navBackdrop'; d.className = 'nav-backdrop'; d.setAttribute('aria-hidden', 'true');
+  (document.querySelector('.header') || document.body).appendChild(d);
+  return d;
+})();
+// стили фона дублируем здесь: меню работает, даже если браузер взял старый style.css из кэша
+(function(){
+  const st = document.createElement('style');
+  st.textContent = `.nav-backdrop{display:none}
+@media (max-width:720px){
+  .nav-backdrop{display:block;position:fixed;inset:0;z-index:50;background:rgba(42,29,33,.42);opacity:0;visibility:hidden;cursor:pointer;transition:opacity .35s cubic-bezier(.22,.8,.3,1),visibility 0s linear .35s;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+  .nav-backdrop.is-open{opacity:1;visibility:visible;transition:opacity .35s cubic-bezier(.22,.8,.3,1),visibility 0s}
+  .nav{touch-action:pan-y}
+}`;
+  document.head.appendChild(st);
+})();
 const isMobileNav = () => window.matchMedia('(max-width: 720px)').matches;
 function setNavOpen(open, keepInline){
   nav.classList.toggle('is-open', open);
@@ -1289,22 +1305,24 @@ overlay.addEventListener('click', e => { if (e.target === overlay) closeTopOverl
 
 (function overlaySwipe(){
   const THRESHOLD = 70, FLICK = 0.5;   // px, px/мс
-  function blocked(target){            // свайп не начинаем на полях ввода и в горизонтально прокручиваемых блоках
+  function blocked(target, root){      // свайп не начинаем на полях ввода и в настоящих горизонтальных каруселях внутри окна
     for (let n = target; n && n.nodeType === 1; n = n.parentNode){
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(n.tagName) || n.hasAttribute('data-no-swipe')) return true;
+      if (n === root) break;
       const ox = getComputedStyle(n).overflowX;
-      if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 2) return true;
+      if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 12) return true;
     }
     return false;
   }
   function attach(o){
     const zones = [o.el].concat(o.extra || []);
-    let sx = 0, sy = 0, st = 0, dx = 0, mode = null, active = false, drag = false;
+    let sx = 0, sy = 0, st = 0, dx = 0, mode = null, active = false, drag = false, outside = false;
     zones.forEach(z => {
       z.addEventListener('touchstart', e => {
-        if (!o.isOpen() || e.touches.length !== 1 || blocked(e.target)) return;
+        if (!o.isOpen() || e.touches.length !== 1 || blocked(e.target, o.move)) return;
         sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
         dx = 0; mode = null; active = true;
+        outside = (z !== o.el) || e.target === o.el;           // начали на затемнённом поле, а не на самом окне
         drag = o.move.contains(e.target) || z === o.el;   // свайп по самому окну/полю окна — окно едет за пальцем
       }, { passive:true });
       z.addEventListener('touchmove', e => {
@@ -1323,8 +1341,14 @@ overlay.addEventListener('click', e => { if (e.target === overlay) closeTopOverl
           if (o.kind === 'modal') o.move.style.opacity = fade;
         }
       }, { passive:true });
-      const end = () => {
+      const end = (ev) => {
         if (!active) return; active = false;
+        // простое касание затемнённого поля закрывает окно (не полагаемся на click: на iOS он ненадёжен)
+        if (mode === null && outside && Date.now() - st < 600){
+          if (ev && ev.cancelable) ev.preventDefault();       // чтобы «клик» не провалился на страницу под окном
+          o.close();
+          return;
+        }
         if (mode !== 'h') return;
         const speed = Math.abs(dx) / Math.max(1, Date.now() - st);
         const far = Math.abs(dx) > THRESHOLD || speed > FLICK;
@@ -1348,7 +1372,7 @@ overlay.addEventListener('click', e => { if (e.target === overlay) closeTopOverl
           }, 420);
         }, 230);
       };
-      z.addEventListener('touchend', end, { passive:true });
+      z.addEventListener('touchend', end, { passive:false });
       z.addEventListener('touchcancel', end, { passive:true });
     });
   }
