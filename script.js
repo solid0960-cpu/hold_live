@@ -664,11 +664,11 @@ const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
 const navBackdrop = document.getElementById('navBackdrop');
 const isMobileNav = () => window.matchMedia('(max-width: 720px)').matches;
-function setNavOpen(open){
+function setNavOpen(open, keepInline){
   nav.classList.toggle('is-open', open);
   navBackdrop.classList.toggle('is-open', open);
   burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-  nav.style.transform = ''; nav.style.transition = '';   // после жеста возвращаем управление CSS
+  if (!keepInline){ nav.style.transform = ''; nav.style.transition = ''; }
   if (open){ pinHeader(); lockScroll(); } else { unpinHeader(); unlockScrollIfNeeded(); }
 }
 /* Когда страница заблокирована (body: fixed), липкая шапка уезжает вместе с телом —
@@ -693,52 +693,9 @@ function closeMobileNav(){ if (nav.classList.contains('is-open')) setNavOpen(fal
 burger.addEventListener('click', () => setNavOpen(!nav.classList.contains('is-open')));
 navBackdrop.addEventListener('click', closeMobileNav);
 nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
 window.addEventListener('resize', () => { if (!isMobileNav()) closeMobileNav(); });
 
-/* Свайп вправо/влево закрывает меню. Направление определяем по первым пикселям жеста:
-   вертикальный — это прокрутка списка пунктов (не трогаем), горизонтальный — наш свайп. */
-(function navSwipe(){
-  let sx = 0, sy = 0, st = 0, mode = null, dx = 0, active = false, follow = false;
-  const THRESHOLD = 60, FLICK = 0.5; // px и px/мс
-  function start(e, canFollow){
-    if (!nav.classList.contains('is-open') || e.touches.length !== 1) return;
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
-    mode = null; dx = 0; active = true; follow = canFollow;
-  }
-  function move(e){
-    if (!active) return;
-    const t = e.touches[0];
-    const mx = t.clientX - sx, my = t.clientY - sy;
-    if (!mode){
-      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
-      mode = Math.abs(mx) > Math.abs(my) ? 'h' : 'v';
-    }
-    if (mode !== 'h') return;
-    dx = mx;
-    if (follow){
-      // вправо — меню едет за пальцем; влево — лёгкое сопротивление
-      const x = dx > 0 ? dx : dx * 0.25;
-      nav.style.transition = 'none';
-      nav.style.transform = `translateX(${x}px)`;
-    }
-  }
-  function end(){
-    if (!active) return;
-    active = false;
-    if (mode !== 'h') return;
-    const speed = Math.abs(dx) / Math.max(1, Date.now() - st);
-    if (Math.abs(dx) > THRESHOLD || speed > FLICK) setNavOpen(false);
-    else { nav.style.transition = ''; nav.style.transform = ''; }   // не дотянули — возвращаем на место
-  }
-  nav.addEventListener('touchstart', e => start(e, true), { passive:true });
-  navBackdrop.addEventListener('touchstart', e => start(e, false), { passive:true });
-  [nav, navBackdrop].forEach(el => {
-    el.addEventListener('touchmove', move, { passive:true });
-    el.addEventListener('touchend', end, { passive:true });
-    el.addEventListener('touchcancel', end, { passive:true });
-  });
-})();
+
 
 /* ============================================
    Фильтр-чипы каталога
@@ -1268,7 +1225,6 @@ async function sendSupportToTelegram(type, data){
   document.getElementById('supportClose').addEventListener('click', closeSupport);
   document.getElementById('supportDone').addEventListener('click', closeSupport);
   supportModal.addEventListener('click', e => { if (e.target === supportModal) closeSupport(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && supportModal.classList.contains('is-open')) closeSupport(); });
   document.getElementById('supportNavLink').addEventListener('click', e => { e.preventDefault(); openSupport(); });
 
   form.addEventListener('submit', async e => {
@@ -1300,4 +1256,101 @@ async function sendSupportToTelegram(type, data){
       supportError('Не удалось отправить обращение. Проверьте интернет и попробуйте ещё раз.');
     }
   });
+})();
+
+/* ============================================
+   ЕДИНОЕ ПОВЕДЕНИЕ ВСЕХ ВЫДВИЖНЫХ ЭЛЕМЕНТОВ
+   меню, корзина, оформление заказа, карточка товара, поддержка:
+   • клик по пустому месту рядом с окном — закрывает
+   • Esc — закрывает верхнее окно
+   • свайп влево/вправо — закрывает (окно едет за пальцем и уезжает в сторону свайпа)
+   • вертикальная прокрутка внутри окна и поля ввода не затрагиваются
+   ============================================ */
+const OVERLAYS = [   // порядок = приоритет (верхнее закрывается первым)
+  { el: supportModal,  move: supportModal.querySelector('.modal__card'),  isOpen: () => supportModal.classList.contains('is-open'),  close: closeSupport,      kind:'modal' },
+  { el: productModal,  move: productModal.querySelector('.modal__card'),  isOpen: () => productModal.classList.contains('is-open'),  close: closeProductModal, kind:'modal' },
+  { el: checkoutModal, move: checkoutModal.querySelector('.modal__card'), isOpen: () => checkoutModal.classList.contains('is-open'), close: closeCheckout,     kind:'modal' },
+  { el: cartDrawer,    move: cartDrawer,                                  isOpen: () => cartDrawer.classList.contains('is-open'),    close: closeCart,         kind:'panel', extra:[overlay] },
+  { el: nav,           move: nav,                                         isOpen: () => nav.classList.contains('is-open'),           close: (k) => setNavOpen(false, k), kind:'panel', extra:[navBackdrop] },
+];
+function closeTopOverlay(){
+  const o = OVERLAYS.find(o => o.isOpen());
+  if (o) o.close();
+  return !!o;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTopOverlay(); });
+// клик по затемнённому полю вокруг модального окна
+OVERLAYS.filter(o => o.kind === 'modal').forEach(o => {
+  o.el.addEventListener('click', e => { if (e.target === o.el) o.close(); });
+});
+// клик по затемнению за панелями (корзина, меню) — уже обработан отдельными слушателями;
+// на всякий случай закрываем верхнее окно и здесь
+overlay.addEventListener('click', e => { if (e.target === overlay) closeTopOverlay(); });
+
+(function overlaySwipe(){
+  const THRESHOLD = 70, FLICK = 0.5;   // px, px/мс
+  function blocked(target){            // свайп не начинаем на полях ввода и в горизонтально прокручиваемых блоках
+    for (let n = target; n && n.nodeType === 1; n = n.parentNode){
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(n.tagName) || n.hasAttribute('data-no-swipe')) return true;
+      const ox = getComputedStyle(n).overflowX;
+      if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 2) return true;
+    }
+    return false;
+  }
+  function attach(o){
+    const zones = [o.el].concat(o.extra || []);
+    let sx = 0, sy = 0, st = 0, dx = 0, mode = null, active = false, drag = false;
+    zones.forEach(z => {
+      z.addEventListener('touchstart', e => {
+        if (!o.isOpen() || e.touches.length !== 1 || blocked(e.target)) return;
+        sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+        dx = 0; mode = null; active = true;
+        drag = o.move.contains(e.target) || z === o.el;   // свайп по самому окну/полю окна — окно едет за пальцем
+      }, { passive:true });
+      z.addEventListener('touchmove', e => {
+        if (!active) return;
+        const t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
+        if (!mode){
+          if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+          mode = Math.abs(mx) > Math.abs(my) ? 'h' : 'v';
+        }
+        if (mode !== 'h') return;
+        dx = mx;
+        if (drag){
+          o.move.style.transition = 'none';
+          const fade = o.kind === 'modal' ? Math.max(0.35, 1 - Math.abs(dx) / (window.innerWidth * 0.9)) : 1;
+          o.move.style.transform = o.kind === 'modal' ? `translateX(${dx}px) scale(1)` : `translateX(${dx}px)`;
+          if (o.kind === 'modal') o.move.style.opacity = fade;
+        }
+      }, { passive:true });
+      const end = () => {
+        if (!active) return; active = false;
+        if (mode !== 'h') return;
+        const speed = Math.abs(dx) / Math.max(1, Date.now() - st);
+        const far = Math.abs(dx) > THRESHOLD || speed > FLICK;
+        if (!far){                                   // не дотянули — возвращаем на место
+          o.move.style.transition = ''; o.move.style.transform = ''; o.move.style.opacity = '';
+          return;
+        }
+        const dir = dx < 0 ? -1 : 1;
+        if (!drag){ o.close(); return; }            // свайп по затемнению — обычное закрытие
+        // уезжаем в сторону свайпа, затем закрываем и аккуратно сбрасываем стили
+        o.move.style.transition = 'transform .3s cubic-bezier(.22,.8,.3,1), opacity .3s ease';
+        o.move.style.transform = `translateX(${dir * (o.kind === 'modal' ? window.innerWidth : o.move.offsetWidth * 1.15)}px)`;
+        o.move.style.opacity = o.kind === 'modal' ? '0' : '';
+        setTimeout(() => {
+          o.close(true);
+          setTimeout(() => {
+            o.move.style.transition = 'none';
+            o.move.style.transform = ''; o.move.style.opacity = '';
+            void o.move.offsetWidth;
+            o.move.style.transition = '';
+          }, 420);
+        }, 230);
+      };
+      z.addEventListener('touchend', end, { passive:true });
+      z.addEventListener('touchcancel', end, { passive:true });
+    });
+  }
+  OVERLAYS.forEach(attach);
 })();
