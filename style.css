@@ -1346,3 +1346,10 @@ html.is-scroll-locked{ overflow:hidden; }
   .nav-backdrop.is-open{ opacity:1; visibility:visible; transition:opacity .35s var(--ease), visibility 0s; }
   .nav{ touch-action:pan-y; will-change:transform; }
 }
+
+/* Бегущая строка — чуть компактнее на телефонах (на ПК без изменений) */
+@media (max-width: 720px){
+  .marquee{ font-size:0.68rem; letter-spacing:.045em; padding:6px 0; }
+  .marquee__track span{ padding-right:14px; }
+  .marquee__track{ animation-duration:24.3s; }   /* та же скорость в px/сек, что и на ПК */
+}
