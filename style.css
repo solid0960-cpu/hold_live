@@ -1331,3 +1331,18 @@ html.is-scroll-locked{ overflow:hidden; }
 .catalog__search{ min-width:0; }
 .catalog__search input{ width:100%; }
 @media (max-width: 720px){ .brand-chip{ max-width:44%; overflow:hidden; text-overflow:ellipsis; } }
+
+
+/* Мобильное меню: затемнение под панелью, свайпы, плавность */
+.nav-backdrop{ display:none; }
+@media (max-width: 720px){
+  .nav-backdrop{
+    display:block; position:fixed; inset:0; z-index:50;
+    background:rgba(42,29,33,0.42);
+    opacity:0; visibility:hidden;
+    transition:opacity .35s var(--ease), visibility 0s linear .35s;
+    touch-action:pan-y;
+  }
+  .nav-backdrop.is-open{ opacity:1; visibility:visible; transition:opacity .35s var(--ease), visibility 0s; }
+  .nav{ touch-action:pan-y; will-change:transform; }
+}
