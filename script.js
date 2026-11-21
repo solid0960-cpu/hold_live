@@ -662,12 +662,83 @@ overlay.addEventListener('click', () => { closeCart(); closeCheckout(); closeMob
    ============================================ */
 const nav = document.getElementById('nav');
 const burger = document.getElementById('burger');
-function closeMobileNav(){ nav.classList.remove('is-open'); unlockScrollIfNeeded(); }
-burger.addEventListener('click', () => {
-  nav.classList.toggle('is-open');
-  if (nav.classList.contains('is-open')) lockScroll(); else unlockScrollIfNeeded();
-});
+const navBackdrop = document.getElementById('navBackdrop');
+const isMobileNav = () => window.matchMedia('(max-width: 720px)').matches;
+function setNavOpen(open){
+  nav.classList.toggle('is-open', open);
+  navBackdrop.classList.toggle('is-open', open);
+  burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  nav.style.transform = ''; nav.style.transition = '';   // после жеста возвращаем управление CSS
+  if (open){ pinHeader(); lockScroll(); } else { unpinHeader(); unlockScrollIfNeeded(); }
+}
+/* Когда страница заблокирована (body: fixed), липкая шапка уезжает вместе с телом —
+   и кнопка «✕» пропадает. Пока меню открыто, закрепляем шапку у верха экрана. */
+let headerSpacer = null;
+function pinHeader(){
+  const hdr = document.querySelector('.header');
+  if (!hdr || headerSpacer || scrollLocked) return;
+  const r = hdr.getBoundingClientRect();
+  headerSpacer = document.createElement('div');
+  headerSpacer.style.height = r.height + 'px';
+  hdr.parentNode.insertBefore(headerSpacer, hdr);
+  hdr.style.cssText += `;position:fixed;top:${r.top}px;left:0;right:0;`;
+}
+function unpinHeader(){
+  const hdr = document.querySelector('.header');
+  if (!headerSpacer) return;
+  headerSpacer.remove(); headerSpacer = null;
+  hdr.style.position = ''; hdr.style.top = ''; hdr.style.left = ''; hdr.style.right = '';
+}
+function closeMobileNav(){ if (nav.classList.contains('is-open')) setNavOpen(false); }
+burger.addEventListener('click', () => setNavOpen(!nav.classList.contains('is-open')));
+navBackdrop.addEventListener('click', closeMobileNav);
 nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
+window.addEventListener('resize', () => { if (!isMobileNav()) closeMobileNav(); });
+
+/* Свайп вправо/влево закрывает меню. Направление определяем по первым пикселям жеста:
+   вертикальный — это прокрутка списка пунктов (не трогаем), горизонтальный — наш свайп. */
+(function navSwipe(){
+  let sx = 0, sy = 0, st = 0, mode = null, dx = 0, active = false, follow = false;
+  const THRESHOLD = 60, FLICK = 0.5; // px и px/мс
+  function start(e, canFollow){
+    if (!nav.classList.contains('is-open') || e.touches.length !== 1) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+    mode = null; dx = 0; active = true; follow = canFollow;
+  }
+  function move(e){
+    if (!active) return;
+    const t = e.touches[0];
+    const mx = t.clientX - sx, my = t.clientY - sy;
+    if (!mode){
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      mode = Math.abs(mx) > Math.abs(my) ? 'h' : 'v';
+    }
+    if (mode !== 'h') return;
+    dx = mx;
+    if (follow){
+      // вправо — меню едет за пальцем; влево — лёгкое сопротивление
+      const x = dx > 0 ? dx : dx * 0.25;
+      nav.style.transition = 'none';
+      nav.style.transform = `translateX(${x}px)`;
+    }
+  }
+  function end(){
+    if (!active) return;
+    active = false;
+    if (mode !== 'h') return;
+    const speed = Math.abs(dx) / Math.max(1, Date.now() - st);
+    if (Math.abs(dx) > THRESHOLD || speed > FLICK) setNavOpen(false);
+    else { nav.style.transition = ''; nav.style.transform = ''; }   // не дотянули — возвращаем на место
+  }
+  nav.addEventListener('touchstart', e => start(e, true), { passive:true });
+  navBackdrop.addEventListener('touchstart', e => start(e, false), { passive:true });
+  [nav, navBackdrop].forEach(el => {
+    el.addEventListener('touchmove', move, { passive:true });
+    el.addEventListener('touchend', end, { passive:true });
+    el.addEventListener('touchcancel', end, { passive:true });
+  });
+})();
 
 /* ============================================
    Фильтр-чипы каталога
