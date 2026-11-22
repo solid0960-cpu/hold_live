@@ -1353,3 +1353,9 @@ html.is-scroll-locked{ overflow:hidden; }
   .marquee__track span{ padding-right:14px; }
   .marquee__track{ animation-duration:24.3s; }   /* та же скорость в px/сек, что и на ПК */
 }
+
+/* iOS Safari раздувает широкий текст без переноса (бегущую строку) — отключаем автоувеличение только для неё */
+.marquee, .marquee__track, .marquee__track span{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
